@@ -1,0 +1,7 @@
+value1 : Stage based Value
+level :
+   deeper :
+     value2 : Value on lower level
+dateValue : 16-11-2017,dd-MM-yyyy
+test :
+   only : Test Only value

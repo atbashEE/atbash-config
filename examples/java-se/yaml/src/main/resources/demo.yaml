@@ -1,0 +1,8 @@
+atbash :
+   date :
+      pattern : dd-MM-yyyy
+value1 : Classpath Value
+level :
+   deeper :
+     value2 : Value on lower level
+dateValue : 16-11-2017

@@ -1,0 +1,288 @@
+= Atbash Configuration
+Rudy De Busscher <rdebusscher@gmail.com>
+v0.9, 27/11/2017
+:example-caption!:
+ifndef::imagesdir[:imagesdir: images]
+ifndef::sourcedir[:sourcedir: ../../main/java]
+
+User manual for Atbash configuration.
+
+== Introduction
+
+MicroProfile (MP) has done a great job in standardizing the configuration for applications.
+
+However, there are a few improvements which I need for my applications and let me create Atbash configuration:
+
+- Should also run on Java 7.
+- Configuration for multiple _stages_ within the artifact.
+- Logging of configuration entries belonging to a _module_.
+- Flexible date format support
+- And optionally using YAML layout for configuration values to indicate relations between configuration properties.
+
+Atbash Config is compliant with MP Config 1.1 and can be used in Java SE and Java EE (only dependency on CDI) environments.
+
+== Ported to Java 7
+
+MicroProfile is targeted to Java 8. So the Config API (the specification) and any implementations, like the general usable Geronimo config, are using features of Java 8.
+
+So I took the code from the following repositories
+
+- MicroProfile-config API: https://github.com/eclipse/microprofile-config/tree/master/api
+- Apache Geronimo configuration: https://github.com/apache/geronimo-config/tree/trunk/impl
+
+And updated the code to be compliant with Java 7.
+
+The only feature which is removed is the mapping between optional configuration values and the Java 8 Optional class.
+
+I kept the original packages and class names but placed them under a different Maven artifact name. That way, upgrading to Java 8 and the _real_ implementations should be very smooth and require no changes whatsoever.
+
+== Getting started
+
+=== MP Configuration running on Java 7
+
+If you just want to run an implementation of MP configuration on Java 7 (with the Atbash extensions), you can add the following dependency to your application.
+
+[source,xml]
+.Plain MP Config for Java 7
+----
+    <dependency>
+        <groupId>be.atbash.config</groupId>
+        <artifactId>geronimo-config</artifactId>
+        <version>${atbash.config.version}</version>
+    </dependency>
+----
+
+For the list of features and how to use them, I refer to the MicroProfile configuration documentation and examples.
+
+=== Atbash configuration extension
+
+By adding the Atbash configuration Maven artifact, you add some additional features as described in the _introduction_ section.
+
+This artifact can be used in combination with the Java 7 ported code but also works with any other MP Config 1.1 compliant implementation.
+
+[source,xml]
+.Atbash extension
+----
+    <dependency>
+        <groupId>be.atbash.config</groupId>
+        <artifactId>atbash-config</artifactId>
+        <version>${atbash.config.version}</version>
+    </dependency>
+----
+
+The list of features is described in the _Atbash configuration features_ section.
+
+When using The Atbash configuration extension with a 'real' implementation, it is advised to exclude the _be.atbash.config:microprofile-config-api_ since these classes are already present (through the dependency on the MP API from the 'real' configuration implementation)
+
+[source,xml]
+.Atbash extension with 'real' configuration implementation
+----
+    <dependency>
+        <groupId>be.atbash.config</groupId>
+        <artifactId>atbash-config</artifactId>
+        <version>${atbash.config.version}</version>
+        <exclusions>
+            <exclusion>
+                <groupId>be.atbash.config</groupId>
+                <artifactId>microprofile-config-api</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+----
+
+
+== Atbash configuration features
+
+=== Define the file containing the properties
+
+In the MicroProfile Configuration, the file name which contains the configuration values is fixed and defined as **META-INF/microprofile-config.properties**.
+
+However, Atbash configuration should also be available within applications which aren't categorized as micro-services, but general Java EE application (perhaps a Web application using JSF framework)
+
+Therefore the _base_ name of the configuration file is specified by implementing the **be.atbash.config.spi.BaseConfigurationName** interface and defining this class for usage with the ServiceLoader mechanism of Java.
+
+[source,java]
+.Defining the base name of the configuration file
+----
+public class DemoBaseName implements BaseConfigurationName {
+    @Override
+    public String getBase() {
+        return "demo";
+    }
+
+}
+----
+
+[source]
+.Define classname for ServiceLoader mechanism within _src/main/resources/META-INF/services/be.atbash.config.spi.BaseConfigurationName_
+----
+be.atbash.config.examples.se.DemoBaseName
+----
+
+In the above example, the file **demo.properties** (but also demo.yaml; see further on) on the classpath is used as configuration source.
+
+Multiple classes implementing the interface (and specified within the ServiceLoader file) are supported.
+
+=== Support for multiple _stages_
+
+Everyone agrees that your artifact (thin war or fat jar) shouldn't be changed between the different stages like _Testing_, _Acceptance_ and _Production_.
+
+Most people achieve this by externalizing the configuration properties which changes in the different environment and specifies them as environment properties or System Properties.
+
+But it is better that all configuration values of your application are also under version control, just as your code.
+
+Therefore your artifact could contain the following files (on the classpath)
+
+- demo.properties -> Configuration properties which do not change between the different environments and/or default values for those properties that do change.
+- demo-test.properties -> Configuration property values for the test environment/stage
+- demo-production.properties -> Configuration property values for the production environment/stage
+
+If the application is started with the stage _test_, the files _demo.properties_ and _demo-test.properties_. When configuration properties are defined in both files, the one in the stage-specific file (_demo-test.properties_ in the example) has priority.
+
+In fact, Atbash adds 3 levels to the _ConfigSource_s defined with the Configuration spec.
+
+[cols="1,3"]
+|===
+|Priority |ConfigSource
+
+|400
+|JVM System properties based ConfigSource (From geronimo Config)
+
+|300
+|System environment properties based ConfigSource (From geronimo Config)
+
+|250
+|Configuration file(see remark) to overrule application property, specified by -Ds JVM System Property.
+
+|200
+|Stage/environment specified file (classpath only), specified by -DS JVM System property.
+
+|150
+|_'Default'_ configuration file for application defined by _base_ name.
+
+|100
+|microprofile-config.properties file based ConfigSource (From geronimo Config)
+|===
+
+Remark: There are 3 prefixes supported to specify the location type of the configuration file, **classpath:**, **file:** and **url:**.
+
+This feature is modeled based on WildFly Swarm configuration principles.
+
+==== Some examples
+
+TODO
+
+
+=== Logging of configuration entries
+
+Atbash configuration will also be used in the rewrite of the Octopus security framework. There we have several modules which each have their separate configuration values and they are logged at startup of the application.
+
+But also in general, it can be handy to have a list within the logs of all the configuration values which are used.
+
+This can be achieved by using the **ModuleConfig** marker interface, as shown in the example.
+
+[source,java]
+._ModuleConfig_s which are logged during application startup.
+----
+@ApplicationScoped
+public class ApplicationConfiguration implements ModuleConfig {
+
+    @Inject
+    private Config config;
+
+    @Inject
+    @ConfigProperty(name = "value1")
+    private String value1;
+
+    @ConfigEntry
+    public String getValue1() {
+        return config.getValue("value1", String.class);
+    }
+
+    @ConfigEntry
+    public Integer getValue2() {
+        return config.getValue("value2", Integer.class);
+    }
+}
+----
+
+----
+INFO  [be.atbash.config.logging.StartupLogging] (ServerService Thread Pool -- 22)
+ config implementation: be.atbash.config.examples.ee.ApplicationConfiguration
+    method:    getValue2
+    value:    500
+
+    method:    getValue1
+    value:    Stage based Value
+----
+
+Of course, this feature only works in CDI based environment and is triggered by the initialization event linked to the CDI @ApplicationScoped.
+
+==== Advanced logging features
+
+@ConfigEntry(noLogging)
+
+@ConfigEntry(value)
+
+Dynamic values
+
+=== Flexible Date format
+
+Now That the code is ported to Java 7, the converters for the _DateTime_ and equivalent are removed. A general one for **Date.class** is added, but the default format is Locale dependent.
+
+This means that when the application runs on multiple servers where, for whichever reason, the Locale information of the OS is not identical, the parsing of the dates can fail.
+
+Therefore, support is foreseen to define the Date pattern within the configuration file itself, as a configuration value.
+
+----
+atbash.date.pattern:dd-MM-yyyy
+----
+
+or in YAML format
+
+----
+atbash :
+   date :
+      pattern : dd-MM-yyyy
+----
+
+WARNING: Ths date format will be used for all Date values within all configuration files, not only the file where the pattern is defined.
+
+Being global can have some nasty unwanted effects when you include artifacts from other developers containing also configuration files but specifying Date values in another format.
+
+Therefore, the format can be specified for each Date value separately as follows
+
+----
+dateValue : 16-11-2017,dd-MM-yyyy
+----
+
+=== YAML support
+
+TODO
+
+== Java SE support
+
+Since the core of MicroProfile Configuration is created around the _ServiceLoader_ principal of Java SE, it can also be used within Command Line programs for example.
+
+[source,java]
+.Using Configuration with plain Java SE programs
+----
+   Config config = ConfigProvider.getConfig();
+   config.getValue("value1", String.class);
+----
+
+Next to the basic functionality of MP Configuration (like converts), following Atbash extension features are also available
+
+- Configuration for multiple _stages_ within the artifact.
+- Flexible date format support.
+- YAML layout for configuration values.
+
+== Roadmap before 1.0
+
+- More tests
+- A parameter to completely disable logging during startup.
+- Annotation to assign a name to the ModuleConfig so it can be used within the logging instead of the class name.
+- Prefix-based configuration keys
+- Investigate Startup logging in Java SE environments
+- Various small improvements
+
