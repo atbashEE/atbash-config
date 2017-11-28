@@ -17,6 +17,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <name>Atbash Configuration</name>
+    <description>Atbash Configuration parent</description>
+    <url>https://raw.githubusercontent.com/atbashEE/atbash-config/master/impl/src/main/doc/manual.adoc</url>
+
     <developers>
         <developer>
             <id>rubus</id>
@@ -26,6 +30,15 @@
             <timezone>+1</timezone>
         </developer>
     </developers>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
 
     <scm>
         <connection>scm:git:git://github.com/atbashEE/atbash-config.git</connection>
@@ -54,6 +67,16 @@
     <profiles>
         <profile>
             <id>release</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
             <build>
                 <plugins>
                     <plugin>
