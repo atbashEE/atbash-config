@@ -22,11 +22,19 @@ public class ConfigView {
     private String value1;
 
     @Inject
+    @ConfigProperty(name = "value2")
+    private int value2;
+
+    @Inject
     @ConfigProperty(name = "testOnly", defaultValue = "Not within Test")
     private String testOnly;
 
     public Integer getValue2() {
         return config.getValue("value2", Integer.class);
+    }
+
+    public int getValue2Int() {
+        return value2;
     }
 
     public String getValue1() {

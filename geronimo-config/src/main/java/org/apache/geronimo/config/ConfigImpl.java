@@ -47,11 +47,16 @@ public class ConfigImpl implements Config {
 
     private void registerDefaultConverter() {
         converters.put(String.class, StringConverter.INSTANCE);
-        converters.put(Boolean.class, BooleanConverter.INSTANCE);
-        converters.put(Double.class, DoubleConverter.INSTANCE);
-        converters.put(Float.class, FloatConverter.INSTANCE);
-        converters.put(Integer.class, IntegerConverter.INSTANCE);
-        converters.put(Long.class, LongConverter.INSTANCE);
+        this.converters.put(Boolean.class, BooleanConverter.INSTANCE);
+        this.converters.put(Boolean.TYPE, BooleanConverter.INSTANCE);
+        this.converters.put(Double.class, DoubleConverter.INSTANCE);
+        this.converters.put(Double.TYPE, DoubleConverter.INSTANCE);
+        this.converters.put(Float.class, FloatConverter.INSTANCE);
+        this.converters.put(Float.TYPE, FloatConverter.INSTANCE);
+        this.converters.put(Integer.class, IntegerConverter.INSTANCE);
+        this.converters.put(Integer.TYPE, IntegerConverter.INSTANCE);
+        this.converters.put(Long.class, LongConverter.INSTANCE);
+        this.converters.put(Long.TYPE, LongConverter.INSTANCE);
 
         converters.put(Date.class, DateConverter.INSTANCE);
 
