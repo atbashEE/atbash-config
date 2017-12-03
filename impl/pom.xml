@@ -24,12 +24,12 @@
     <parent>
         <groupId>be.atbash.config</groupId>
         <artifactId>config-parent</artifactId>
-        <version>0.9</version>
+        <version>0.9.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>atbash-config</artifactId>
-    <version>0.9</version>
+    <version>0.9.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Atbash Configuration extension</name>
@@ -68,7 +68,8 @@
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>1.19</version>
-            <optional>true</optional>  <!-- TODO Otherwise it gives issues with Swarm since it access the Logger before Swarm does when using WebTester-->
+            <optional>true
+            </optional>  <!-- TODO Otherwise it gives issues with Swarm since it access the Logger before Swarm does when using WebTester-->
             <!-- And first impression is that Swarm already has snakeyaml. To be investigated -->
         </dependency>
 
