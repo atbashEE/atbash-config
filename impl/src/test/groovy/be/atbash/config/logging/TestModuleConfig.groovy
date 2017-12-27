@@ -81,7 +81,7 @@ class TestModuleConfig implements ModuleConfig {
     static class MyConfigObject {
         @Override
         String toString() {
-            final StringBuilder sb = new StringBuilder("MyConfigObject{");
+            final StringBuilder sb = new StringBuilder("MyConfigObject{")
             sb.append('}')
             return sb.toString()
         }

@@ -15,6 +15,7 @@
  */
 package be.atbash.config.logging
 
+import be.atbash.config.AbstractConfiguration
 import com.blogspot.toomuchcoding.spock.subjcollabs.Collaborator
 import com.blogspot.toomuchcoding.spock.subjcollabs.Subject
 import spock.lang.Specification
@@ -57,7 +58,7 @@ class StartupLoggingTest extends Specification {
         data.contains("getClassResultConfigValue" + VALUE_SEPARATOR + "be.atbash.config.logging.TestModuleConfig.MyConfigObject")
     }
 
-    def testGetConfigInfo_NoLogging() {
+    def getConfigInfo_NoLogging() {
         given:
         System.setProperty("atbash.config.log.all", "")
 
@@ -71,7 +72,7 @@ class StartupLoggingTest extends Specification {
 
     }
 
-    def testGetConfigInfo_AllLogging() throws NoSuchFieldException, IllegalAccessException {
+    def getConfigInfo_AllLogging() throws NoSuchFieldException, IllegalAccessException {
         given:
         System.setProperty("atbash.config.log.all", "tRue");
 
@@ -90,4 +91,17 @@ class StartupLoggingTest extends Specification {
 
     }
 
+    def getConfigInfo_hierarchy() {
+        given:
+        System.setProperty("atbash.config.log.all", "")
+
+        when:
+        String info = logging.getConfigInfo(new HierarchyConfig())
+        String data = info.replaceAll("\\s", "")
+
+        then:
+        data.contains(HierarchyConfig.name)
+        data.contains("defineStringConfigValue" + VALUE_SEPARATOR + "ConfigValue")
+        !data.contains(AbstractConfiguration.name)
+    }
 }

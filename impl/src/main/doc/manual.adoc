@@ -7,6 +7,17 @@ ifndef::sourcedir[:sourcedir: ../../main/java]
 
 User manual for Atbash configuration.
 
+== Release Notes
+
+=== 0.9.1
+
+. _AbstractConfiguration_ containing some helper methods to retrieve optional values programmatically
+. Logging no longer contain class name with no _@ConfigEntry_ values.
+
+=== 0.9
+
+Initial release, based on some extensions written for DeltaSpike logging.
+
 == Introduction
 
 MicroProfile (MP) has done a great job in standardizing the configuration for applications.
@@ -259,6 +270,16 @@ dateValue : 16-11-2017,dd-MM-yyyy
 === YAML support
 
 TODO
+
+=== AbstractConfiguration (0.9.1)
+
+An abstract class which can be used to retrieve optional configuration values with or without a default value.
+
+Using the CDI Qualifier _@ConfigProperty_, thus can already be achieved, but not in a programmatic way.
+
+----
+protected <T> T getOptionalValue(String propertyName, T defaultValue, Class<T> propertyType) {
+----
 
 == Java SE support
 

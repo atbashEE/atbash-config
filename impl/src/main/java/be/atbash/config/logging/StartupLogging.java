@@ -76,9 +76,7 @@ public class StartupLogging {
         while (currentClass != null &&
                 !Object.class.getName().equals(currentClass.getName())) {
 
-            info.append("config implementation: ");
-            info.append(currentClass.getName());
-            info.append(separator);
+            StringBuilder configLogging = new StringBuilder();
 
             //inspect the other methods of the implementing class
             for (Method currentMethod : currentClass.getDeclaredMethods()) {
@@ -89,13 +87,21 @@ public class StartupLogging {
 
                 methodNames.add(currentMethod.getName());
 
-                info.append("   method:\t").append(currentMethod.getName());
+                configLogging.append("   method:\t").append(currentMethod.getName());
+                configLogging.append(separator);
+
+                addConfigEntryValue(config, configLogging, currentMethod);
+
+                configLogging.append(separator);
+                configLogging.append(separator);
+            }
+
+            if (configLogging.length()>0) {
+                info.append("config implementation: ");
+                info.append(currentClass.getName());
                 info.append(separator);
 
-                addConfigEntryValue(config, info, currentMethod);
-
-                info.append(separator);
-                info.append(separator);
+                info.append(configLogging);
             }
 
             currentClass = currentClass.getSuperclass();

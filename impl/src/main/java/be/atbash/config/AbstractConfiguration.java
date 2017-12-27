@@ -24,16 +24,24 @@ import org.eclipse.microprofile.config.ConfigProvider;
 
 public abstract class AbstractConfiguration {
 
-    protected <T> T getOptionalValue(String key, T defaultValue, Class<T> aClass) {
+    /**
+     * Reads the configuration property as an optional value, so it is not required to have a value for the key/propertyName, and
+     * returns the <code>defaultValue</code> when the value isn't defined.
+     * @param <T>          the property type
+     * @param propertyName The configuration propertyName.
+     * @param propertyType The type into which the resolve property value should be converted
+     * @return the resolved property value as an value of the requested type. (defaultValue when not found)
+     */
+    protected <T> T getOptionalValue(String propertyName, T defaultValue, Class<T> propertyType) {
         Config config = ConfigProvider.getConfig();
-        T result = config.getOptionalValue(key, aClass);
+        T result = config.getOptionalValue(propertyName, propertyType);
         if (result == null) {
             result = defaultValue;
         }
         return result;
     }
 
-    protected <T> T getOptionalValue(String key, Class<T> aClass) {
-        return getOptionalValue(key, null, aClass);
+    protected <T> T getOptionalValue(String propertyName, Class<T> propertyType) {
+        return getOptionalValue(propertyName, null, propertyType);
     }
 }
