@@ -16,6 +16,8 @@
 package be.atbash.config.logging
 
 import be.atbash.config.AbstractConfiguration
+import be.atbash.config.logging.testclasses.HierarchyConfig
+import be.atbash.config.logging.testclasses.TestModuleConfig
 import com.blogspot.toomuchcoding.spock.subjcollabs.Collaborator
 import com.blogspot.toomuchcoding.spock.subjcollabs.Subject
 import spock.lang.Specification
@@ -55,7 +57,7 @@ class StartupLoggingTest extends Specification {
         !data.contains("doNotLog")
         !data.contains("Shouldneverbeinlog")
         data.contains("getConfigValueWithParameter" + VALUE_SEPARATOR + "[ConfigWithparameter]")
-        data.contains("getClassResultConfigValue" + VALUE_SEPARATOR + "be.atbash.config.logging.TestModuleConfig.MyConfigObject")
+        data.contains("getClassResultConfigValue" + VALUE_SEPARATOR + "be.atbash.config.logging.testclasses.TestModuleConfig.MyConfigObject")
     }
 
     def getConfigInfo_NoLogging() {

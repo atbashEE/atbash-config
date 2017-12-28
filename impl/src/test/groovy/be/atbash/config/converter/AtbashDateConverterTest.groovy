@@ -28,6 +28,10 @@ class AtbashDateConverterTest extends Specification {
     @Subject
     AtbashDateConverter converter
 
+    def cleanup() {
+        TestConfig.resetConfig()
+    }
+
     def Convert_defaultFormat() {
         when:
         Date result = converter.convert("2017-11-15")

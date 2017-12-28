@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package be.atbash.config.logging
+package be.atbash.config.logging.testclasses
+
+import be.atbash.config.logging.ConfigEntry
+import be.atbash.config.logging.ModuleConfig
 
 /**
  *

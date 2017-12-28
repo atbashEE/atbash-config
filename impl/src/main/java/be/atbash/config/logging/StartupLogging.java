@@ -73,6 +73,8 @@ public class StartupLogging {
         List<String> methodNames = new ArrayList<>();
 
         Class currentClass = ProxyUtils.getUnproxiedClass(config.getClass());
+        ModuleConfigName moduleConfigName = (ModuleConfigName) currentClass.getAnnotation(ModuleConfigName.class);
+
         while (currentClass != null &&
                 !Object.class.getName().equals(currentClass.getName())) {
 
@@ -96,18 +98,57 @@ public class StartupLogging {
                 configLogging.append(separator);
             }
 
-            if (configLogging.length()>0) {
-                info.append("config implementation: ");
-                info.append(currentClass.getName());
-                info.append(separator);
+            // Was there anything annotated with @ConfigEntry
+            if (configLogging.length() > 0) {
+
+                outputConfigurationName(info, moduleConfigName, currentClass);
 
                 info.append(configLogging);
             }
 
+            // Look into the parent class
             currentClass = currentClass.getSuperclass();
         }
 
         return info.toString();
+    }
+
+    private void outputConfigurationName(StringBuilder info, ModuleConfigName moduleConfigName, Class currentClass) {
+
+        if (moduleConfigName == null) {
+            // No annotation -> output class name, azlso for the parent classes.
+            info.append("Config implementation: ");
+            info.append(currentClass.getName());
+            info.append(separator);
+        } else {
+            if (info.length() > 0) {
+                // There is already something to output, so we are in a parent class
+                if (moduleConfigName.className()) {
+                    // moduleConfig specifies that we need to output the class name.
+                    outputNameAndClassName(info, moduleConfigName, currentClass);
+                }
+                // When className not needs to be outputted, do not repeat module config name
+            } else {
+                // The first class where we have something to log.
+                if (moduleConfigName.className()) {
+                    // moduleConfig specifies that we need to output the class name.
+                    outputNameAndClassName(info, moduleConfigName, currentClass);
+                } else {
+                    info.append(moduleConfigName.value());
+                    info.append(" :");
+                    info.append(separator);
+                }
+            }
+        }
+    }
+
+    private void outputNameAndClassName(StringBuilder info, ModuleConfigName moduleConfigName, Class currentClass) {
+        info.append("Config implementation: ");
+        info.append(moduleConfigName.value());
+        info.append(" ( ");
+        info.append(currentClass.getName());
+        info.append(" )");
+        info.append(separator);
     }
 
     private void addConfigEntryValue(ModuleConfig config, StringBuilder info, Method currentMethod) {

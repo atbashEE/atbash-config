@@ -27,6 +27,10 @@ class AbstractConfigurationTest extends Specification {
     @Subject
     AbstractConfiguration config = new AbstractConfiguration() {}
 
+    def cleanup() {
+        TestConfig.resetConfig()
+    }
+
     def "GetOptionalValue"() {
         given:
         TestConfig.addConfigValue("someConfig", "configValue")

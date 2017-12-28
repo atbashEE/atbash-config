@@ -219,7 +219,7 @@ public class ApplicationConfiguration implements ModuleConfig {
 
 ----
 INFO  [be.atbash.config.logging.StartupLogging] (ServerService Thread Pool -- 22)
- config implementation: be.atbash.config.examples.ee.ApplicationConfiguration
+ Config implementation: be.atbash.config.examples.ee.ApplicationConfiguration
     method:    getValue2
     value:    500
 
@@ -228,6 +228,81 @@ INFO  [be.atbash.config.logging.StartupLogging] (ServerService Thread Pool -- 22
 ----
 
 Of course, this feature only works in CDI based environment and is triggered by the initialization event linked to the CDI @ApplicationScoped.
+
+=== Specify the configuration name
+
+With the @ModuleConfigName, we can define the name which is showed above the config values within the log.
+
+For this example, we have the following 2 classes
+
+[source,java]
+._Parent_ s class.
+----
+public class ParentConfig {
+
+    @ConfigEntry
+    public String defineParentValue() {
+        return "Parent Config Value";
+    }
+----
+
+[source,java]
+._Child_ s class.
+----
+@ApplicationScoped
+public class ChildConfig extends ParentConfig implements ModuleConfig {
+
+    @ConfigEntry
+    public String defineChildValue() {
+        return "Child Config Value";
+    }
+
+}
+----
+
+Depending on what we define on the ChildConfig class, we have a slightly different output.
+
+----
+@ModuleConfigName("Module Config Name example")
+
+ INFO  [be.atbash.config.logging.StartupLogging] (ServerService Thread Pool -- 66)
+Module Config Name example :
+   method:	defineChildValue
+   value:	Child Config Value
+
+   method:	defineParentValue
+   value:	Parent Config Value
+
+
+----
+
+----
+@ModuleConfigName(value = "Module Config with classes", className = true)
+
+INFO  [be.atbash.config.logging.StartupLogging] (ServerService Thread Pool -- 24)
+Config implementation: Module Config with classes ( be.atbash.config.examples.ee.configname.ChildConfig )
+   method:	defineChildValue
+   value:	Child Config Value
+
+Config implementation: Module Config with classes ( be.atbash.config.examples.ee.configname.ParentConfig )
+   method:	defineParentValue
+   value:	Parent Config Value
+
+----
+
+----
+without @ModuleConfigName
+
+INFO  [be.atbash.config.logging.StartupLogging] (ServerService Thread Pool -- 63)
+Config implementation: be.atbash.config.examples.ee.configname.ChildConfig
+   method:	defineChildValue
+   value:	Child Config Value
+
+Config implementation: be.atbash.config.examples.ee.configname.ParentConfig
+   method:	defineParentValue
+   value:	Parent Config Value
+
+----
 
 ==== Advanced logging features
 
