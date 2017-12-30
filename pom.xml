@@ -18,6 +18,7 @@
     </properties>
 
     <name>Atbash Configuration</name>
+    <inceptionYear>2017</inceptionYear>
     <description>Atbash Configuration parent</description>
     <url>https://raw.githubusercontent.com/atbashEE/atbash-config/master/impl/src/main/doc/manual.adoc</url>
 
