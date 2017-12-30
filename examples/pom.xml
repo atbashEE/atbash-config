@@ -93,6 +93,7 @@
                     <properties>
                         <owner>Rudy De Busscher</owner>
                         <year>2017</year>
+                        <aggregate>true</aggregate>
                     </properties>
                     <excludes>
                         <exclude>**/*.adoc</exclude>

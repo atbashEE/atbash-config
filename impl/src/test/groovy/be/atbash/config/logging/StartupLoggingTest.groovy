@@ -106,4 +106,20 @@ class StartupLoggingTest extends Specification {
         data.contains("defineStringConfigValue" + VALUE_SEPARATOR + "ConfigValue")
         !data.contains(AbstractConfiguration.name)
     }
+
+    def getConfigInfo_disabledLogging() {
+        given:
+        System.setProperty("atbash.config.log.all", "")
+        System.setProperty("atbash.config.log.disabled", "true")
+
+        Field loggingDisabled = logging.getClass().getDeclaredField("loggingDisabled")
+        loggingDisabled.setAccessible(true)
+        loggingDisabled.setBoolean(logging, Boolean.TRUE)
+
+        when:
+        String info = logging.getConfigInfo(new TestModuleConfig())
+
+        then:
+        info == null
+    }
 }

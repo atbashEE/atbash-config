@@ -16,6 +16,8 @@
 package be.atbash.config.logging;
 
 import be.atbash.config.util.ProxyUtils;
+import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +44,8 @@ public class StartupLogging {
 
     private boolean allLoggingActivated;
 
+    private boolean loggingDisabled;
+
     @Inject
     private DynamicConfigValueHelper valueHelper;
 
@@ -50,7 +54,11 @@ public class StartupLogging {
 
     public void logAtStartApplication(@Observes @Initialized(ApplicationScoped.class) Object event) {
 
-        checkAllLogging();
+        checkLoggingParameters();
+
+        if (loggingDisabled) {
+            return;
+        }
 
         StringBuilder configInfo = new StringBuilder();
         configInfo.append('\n');
@@ -61,13 +69,20 @@ public class StartupLogging {
         logger.info(configInfo.toString());
     }
 
-    private void checkAllLogging() {
+    private void checkLoggingParameters() {
         String logAllProperty = System.getProperty("atbash.config.log.all");
         allLoggingActivated = "true".equalsIgnoreCase(logAllProperty);
+
+        Config config = ConfigProvider.getConfig();
+        Boolean disabledLogging = config.getOptionalValue("atbash.config.log.disabled", Boolean.class);
+        loggingDisabled = disabledLogging == null ? false : disabledLogging;
     }
 
     //generic alternative to #toString to avoid an overriden #toString at custom implementations
     public String getConfigInfo(ModuleConfig config) {
+        if (loggingDisabled) {
+            return null;
+        }
         StringBuilder info = new StringBuilder();
 
         List<String> methodNames = new ArrayList<>();
@@ -160,7 +175,6 @@ public class StartupLogging {
 
                 info.append("   value:\t").append(Arrays.toString(configEntry.value()));
             } else {
-                // TODO Verify it is a no-arg method
                 if (currentMethod.getParameterTypes().length == 0) {
                     if (void.class.equals(currentMethod.getReturnType())) {
                         info.append("   value:\tunknown - Method has no return value");

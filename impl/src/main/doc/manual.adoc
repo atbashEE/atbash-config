@@ -12,6 +12,8 @@ User manual for Atbash configuration.
 === 0.9.1
 
 . _AbstractConfiguration_ containing some helper methods to retrieve optional values programmatically
+. @ModuleConfigName to define the name of the logging instead of the class name
+. Parameter _atbash.config.log.disabled_ to completely disable logging.
 . Logging no longer contain class name with no _@ConfigEntry_ values.
 
 === 0.9
@@ -229,7 +231,12 @@ INFO  [be.atbash.config.logging.StartupLogging] (ServerService Thread Pool -- 22
 
 Of course, this feature only works in CDI based environment and is triggered by the initialization event linked to the CDI @ApplicationScoped.
 
-=== Specify the configuration name
+Since 0.9.1, the logging can be disabled by specifying the value _true_ for the configuration parameter **atbash.config.log.disabled**.
+This is a regular parameter, resolved from configuration file, or environment based on the rules described in the section of the multiple stages.
+
+So we can for instance disable the logging completely in production, but not in test for example.
+
+=== Specify the configuration name (0.9.1)
 
 With the @ModuleConfigName, we can define the name which is showed above the config values within the log.
 
@@ -306,11 +313,46 @@ Config implementation: be.atbash.config.examples.ee.configname.ParentConfig
 
 ==== Advanced logging features
 
-@ConfigEntry(noLogging)
+===== @ConfigEntry(noLogging)
 
-@ConfigEntry(value)
+The config value can contain sensitive information so it is not always desirable to have this value in the log.  By specifying the member _noLogging_ one can indicate that the configuration value will not be logged, only if it value is specified (non null) or not.
 
-Dynamic values
+[source,java]
+.Not logging sensitentive information
+----
+@ConfigEntry(nologging = true)
+public String getSecretValue() {return "secret";}
+----
+
+The above configuration parameter will then be shown as follow in the log file.
+
+----
+   method:	getSecretValue
+   value:	No logging parameter active [non null value]
+----
+
+You can overrule this hiding of configuration value by defining the JWM system value **atbash.config.log.all** (like in -Datbash.config.log.all=true) and the value will be shown in the log.
+
+===== @ConfigEntry(value)
+
+There are various use cases where it doesn't make sense to show the configuration parameter value.
+
+1. There are some cases that the exact value of the configuration parameter is only known after the application is fully deployed. Or that the value is based on some method calls which aren't available during the logging of the parameters (like calculated URLs of the deployed Web applications)
+
+When we define a value for the member **value**, this value is shown instead of executing the method. The text you can place there is anything you like but should be informative why it is not the real value.
+
+2. A second use-case, although even more rare, is that the method has a parameter (after all those methods which provide configuration values are regular methods)
+
+In this case it is impossible for the code to know what the parameter should be. With the usage of the _value_ member, we can put some info into the log, otherwise following message is shown.
+
+----
+   method:	methodNameWithParameter
+   value:	unknown - Method has a parameter
+----
+
+===== Dynamic values
+
+TODO
 
 === Flexible Date format
 
