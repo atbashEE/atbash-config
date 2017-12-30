@@ -38,7 +38,7 @@ import java.util.List;
 @ApplicationScoped
 public class StartupLogging {
 
-    private Logger logger = LoggerFactory.getLogger(StartupLogging.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(StartupLogging.class);
 
     private String separator = System.getProperty("line.separator");
 
@@ -66,7 +66,7 @@ public class StartupLogging {
         for (ModuleConfig config : moduleConfigs) {
             configInfo.append(getConfigInfo(config));
         }
-        logger.info(configInfo.toString());
+        LOGGER.info(configInfo.toString());
     }
 
     private void checkLoggingParameters() {
@@ -210,5 +210,19 @@ public class StartupLogging {
         } catch (InvocationTargetException e) {
             info.append("   value:\t [unknown]");
         }
+    }
+
+    public static void logConfiguration(ModuleConfig moduleConfig) {
+
+        StartupLogging startupLogging = new StartupLogging();
+        startupLogging.valueHelper = new DynamicConfigValueHelper();
+
+        startupLogging.checkLoggingParameters();
+
+        if (startupLogging.loggingDisabled) {
+            return;
+        }
+
+        LOGGER.info(startupLogging.getConfigInfo(moduleConfig));
     }
 }

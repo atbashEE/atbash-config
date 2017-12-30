@@ -1,0 +1,11 @@
+# local development
+
+mvn clean install
+
+
+# Update license header
+
+./updateLicenseHeaders.sh
+
+
+

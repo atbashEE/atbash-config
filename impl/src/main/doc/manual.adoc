@@ -11,8 +11,9 @@ User manual for Atbash configuration.
 
 === 0.9.1
 
-. _AbstractConfiguration_ containing some helper methods to retrieve optional values programmatically
-. @ModuleConfigName to define the name of the logging instead of the class name
+. _AbstractConfiguration_ containing some helper methods to retrieve optional values programmatically.
+. _@ModuleConfigName_ to define the name of the logging instead of the class name.
+. Logging in Java SE.
 . Parameter _atbash.config.log.disabled_ to completely disable logging.
 . Logging no longer contain class name with no _@ConfigEntry_ values.
 
@@ -36,7 +37,7 @@ Atbash Config is compliant with MP Config 1.1 and can be used in Java SE and Jav
 
 == Ported to Java 7
 
-MicroProfile is targeted to Java 8. So the Config API (the specification) and any implementations, like the general usable Geronimo config, are using features of Java 8.
+MicroProfile is targeted to Java 8. So the Config API (the specification) and any implementations, like the general usable _Geronimo config_, are using features of Java 8.
 
 So I took the code from the following repositories
 
@@ -126,8 +127,8 @@ public class DemoBaseName implements BaseConfigurationName {
 }
 ----
 
+Define classname for ServiceLoader mechanism within _src/main/resources/META-INF/services/be.atbash.config.spi.BaseConfigurationName_
 [source]
-.Define classname for ServiceLoader mechanism within _src/main/resources/META-INF/services/be.atbash.config.spi.BaseConfigurationName_
 ----
 be.atbash.config.examples.se.DemoBaseName
 ----
@@ -152,7 +153,7 @@ Therefore your artifact could contain the following files (on the classpath)
 
 If the application is started with the stage _test_, the files _demo.properties_ and _demo-test.properties_. When configuration properties are defined in both files, the one in the stage-specific file (_demo-test.properties_ in the example) has priority.
 
-In fact, Atbash adds 3 levels to the _ConfigSource_s defined with the Configuration spec.
+In fact, Atbash adds 3 levels to the __ConfigSource__s defined with the Configuration spec.
 
 [cols="1,3"]
 |===
@@ -195,7 +196,7 @@ But also in general, it can be handy to have a list within the logs of all the c
 This can be achieved by using the **ModuleConfig** marker interface, as shown in the example.
 
 [source,java]
-._ModuleConfig_s which are logged during application startup.
+.__ModuleConfig__s which are logged during application startup.
 ----
 @ApplicationScoped
 public class ApplicationConfiguration implements ModuleConfig {
@@ -238,12 +239,12 @@ So we can for instance disable the logging completely in production, but not in 
 
 === Specify the configuration name (0.9.1)
 
-With the @ModuleConfigName, we can define the name which is showed above the config values within the log.
+With the _@ModuleConfigName_, we can define the name which is showed above the config values within the log.
 
 For this example, we have the following 2 classes
 
+__Parent__s class.
 [source,java]
-._Parent_ s class.
 ----
 public class ParentConfig {
 
@@ -253,8 +254,8 @@ public class ParentConfig {
     }
 ----
 
+__Child__s class.
 [source,java]
-._Child_ s class.
 ----
 @ApplicationScoped
 public class ChildConfig extends ParentConfig implements ModuleConfig {
@@ -311,9 +312,9 @@ Config implementation: be.atbash.config.examples.ee.configname.ParentConfig
 
 ----
 
-==== Advanced logging features
+=== Advanced logging features
 
-===== @ConfigEntry(noLogging)
+==== @ConfigEntry(noLogging)
 
 The config value can contain sensitive information so it is not always desirable to have this value in the log.  By specifying the member _noLogging_ one can indicate that the configuration value will not be logged, only if it value is specified (non null) or not.
 
@@ -333,7 +334,7 @@ The above configuration parameter will then be shown as follow in the log file.
 
 You can overrule this hiding of configuration value by defining the JWM system value **atbash.config.log.all** (like in -Datbash.config.log.all=true) and the value will be shown in the log.
 
-===== @ConfigEntry(value)
+==== @ConfigEntry(value)
 
 There are various use cases where it doesn't make sense to show the configuration parameter value.
 
@@ -350,13 +351,13 @@ In this case it is impossible for the code to know what the parameter should be.
    value:	unknown - Method has a parameter
 ----
 
-===== Dynamic values
+==== Dynamic values
 
 TODO
 
 === Flexible Date format
 
-Now That the code is ported to Java 7, the converters for the _DateTime_ and equivalent are removed. A general one for **Date.class** is added, but the default format is Locale dependent.
+Now that the code is ported to Java 7, the converters for the _DateTime_ and equivalent are removed. A general one for **Date.class** is added, but the default format is Locale dependent.
 
 This means that when the application runs on multiple servers where, for whichever reason, the Locale information of the OS is not identical, the parsing of the dates can fail.
 
@@ -392,7 +393,7 @@ TODO
 
 An abstract class which can be used to retrieve optional configuration values with or without a default value.
 
-Using the CDI Qualifier _@ConfigProperty_, thus can already be achieved, but not in a programmatic way.
+Using the CDI Qualifier _@ConfigProperty_, this can already be achieved, but not in a programmatic way.
 
 ----
 protected <T> T getOptionalValue(String propertyName, T defaultValue, Class<T> propertyType) {
@@ -415,12 +416,23 @@ Next to the basic functionality of MP Configuration (like converts), following A
 - Flexible date format support.
 - YAML layout for configuration values.
 
+=== Logging in Java SE (0.9.1)
+
+All CDI beans implementing the _ModuleConfig_ marker interface containing methods specifying some configuration values (with _@ConfigEntry_) are logged automatically during startup of the application.
+
+This is not possible in Java SE (unless using CDI 2.0) but the developer can decide to manually log the configuration values.
+
+The class must only implement the marker interface and with the following command the values are logged.
+
+[source,java]
+----
+    ModuleConfiguration moduleConfiguration = new ModuleConfiguration();
+    StartupLogging.logConfiguration(moduleConfiguration);
+----
+
 == Roadmap before 1.0
 
 - More tests
-- A parameter to completely disable logging during startup.
-- Annotation to assign a name to the ModuleConfig so it can be used within the logging instead of the class name.
 - Prefix-based configuration keys
-- Investigate Startup logging in Java SE environments
 - Various small improvements
 
