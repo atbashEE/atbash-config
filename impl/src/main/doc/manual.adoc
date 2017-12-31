@@ -11,11 +11,12 @@ User manual for Atbash configuration.
 
 === 0.9.1
 
+. _atbash-config-test_ artifact containing a Map based Config implementation for Unit testing.
 . _AbstractConfiguration_ containing some helper methods to retrieve optional values programmatically.
 . _@ModuleConfigName_ to define the name of the logging instead of the class name.
 . Logging in Java SE.
 . Parameter _atbash.config.log.disabled_ to completely disable logging.
-. Logging no longer contain class name with no _@ConfigEntry_ values.
+. Logging no longer contain class name when it contains no _@ConfigEntry_ entries.
 
 === 0.9
 
@@ -429,6 +430,54 @@ The class must only implement the marker interface and with the following comman
     ModuleConfiguration moduleConfiguration = new ModuleConfiguration();
     StartupLogging.logConfiguration(moduleConfiguration);
 ----
+
+== Test module (0.9.1)
+
+When other projects are using the _Atbash config_ resources, for their configuration through parameter values, tests are probably failing with the message.
+
+----
+Caused by: java.lang.IllegalStateException: No ConfigProviderResolver implementation found!
+	at org.eclipse.microprofile.config.spi.ConfigProviderResolver.instance(ConfigProviderResolver.java:121)
+----
+
+This is because _Atbash-config_ is only bundled with the API and not any implementation (so that it can be used with any Eclipse MicroProfile Config implementation)
+
+For testing, a simple implementation based on a HashMap which can be filled according to the needs of the test, is available in the _Atbach Config test_ artifact.
+
+[source,xml]
+----
+    <dependency>
+        <groupId>be.atbash.config</groupId>
+        <artifactId>atbash-config-test</artifactId>
+        <version>${atbash.config.version}</version>
+        <scope>test</scope>
+    </dependency>
+----
+
+How to use this module within your unit tests?
+
+Use the **addConfigValue()** method to define some values for Configuration parameters.
+
+[source,java]
+----
+   TestConfig.addConfigValue("someConfig", "configValue");
+----
+
+When the test is finished (for example within the _@After_ annotated method with JUnit), don't forget to reset the configuration source so that the values don't influence other tests.
+
+[source,java]
+----
+   TestConfig.resetConfig();
+----
+
+Probably you want the default converters in place so that you can retrieve the configuration values as String, Boolean, Long, Float, Double, Integer or Date instance. This can be achieved by executing the **registerDefaultConverters()** method.
+
+[source,java]
+----
+   TestConfig.registerDefaultConverters();
+----
+
+Additional converters can be registered by the **registerConverter(Converter<?>)** method. And all the converters are removed by the **deregisterAllConverters()** method.
 
 == Roadmap before 1.0
 

@@ -15,7 +15,7 @@
  */
 package be.atbash.config.converter
 
-import be.atbash.config.TestConfig
+import be.atbash.config.test.TestConfig
 import com.blogspot.toomuchcoding.spock.subjcollabs.Subject
 import spock.lang.Specification
 
@@ -50,6 +50,7 @@ class AtbashDateConverterTest extends Specification {
 
     def Convert_configBasedFormat() {
         given:
+        TestConfig.registerDefaultConverters()
         TestConfig.addConfigValue("atbash.date.pattern", "dd-yyyy-MM")
 
         when:

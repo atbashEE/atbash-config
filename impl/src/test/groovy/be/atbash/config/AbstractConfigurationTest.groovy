@@ -15,6 +15,7 @@
  */
 package be.atbash.config
 
+import be.atbash.config.test.TestConfig
 import com.blogspot.toomuchcoding.spock.subjcollabs.Subject
 import spock.lang.Specification
 

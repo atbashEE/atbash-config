@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,39 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package be.atbash.config
+package be.atbash.config.test;
 
-import org.eclipse.microprofile.config.Config
-import org.eclipse.microprofile.config.spi.ConfigBuilder
-import org.eclipse.microprofile.config.spi.ConfigProviderResolver
+import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.spi.ConfigBuilder;
+import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 
 /**
  *
  */
+public class TestConfigProvider extends ConfigProviderResolver {
 
-class TestConfigProvider extends ConfigProviderResolver {
     @Override
-    Config getConfig() {
-        return new TestConfig()
+    public Config getConfig() {
+        return new TestConfig();
     }
 
     @Override
-    Config getConfig(ClassLoader loader) {
-        return null
+    public Config getConfig(ClassLoader loader) {
+        return null;
     }
 
     @Override
-    ConfigBuilder getBuilder() {
-        return null
+    public ConfigBuilder getBuilder() {
+        return null;
     }
 
     @Override
-    void registerConfig(Config config, ClassLoader classLoader) {
+    public void registerConfig(Config config, ClassLoader classLoader) {
 
     }
 
     @Override
-    void releaseConfig(Config config) {
+    public void releaseConfig(Config config) {
 
     }
 }

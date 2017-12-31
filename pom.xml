@@ -60,6 +60,7 @@
     <modules>
         <module>api</module>
         <module>geronimo-config</module>
+        <module>test</module>
         <module>impl</module>
         <module>examples</module>
 

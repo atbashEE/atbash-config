@@ -17,4 +17,4 @@
 # under the License.
 #
 
-be.atbash.config.TestConfigProvider
+be.atbash.config.test.TestConfigProvider

@@ -79,7 +79,14 @@
             <version>1.7.25</version>
         </dependency>
 
-        <!-- for the Spock/Groovy based teting -->
+        <dependency>
+            <groupId>be.atbash.config</groupId>
+            <artifactId>atbash-config-test</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- for the Spock/Groovy based testing -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
