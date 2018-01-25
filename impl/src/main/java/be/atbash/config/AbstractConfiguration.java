@@ -15,13 +15,14 @@
  */
 package be.atbash.config;
 
+import be.atbash.util.PublicAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  *
  */
-
+@PublicAPI
 public abstract class AbstractConfiguration {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

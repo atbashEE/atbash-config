@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Rudy De Busscher
+ * Copyright 2017-2018 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package be.atbash.config.util;
 
+import be.atbash.util.StringUtils;
+import be.atbash.util.reflection.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +28,7 @@ import java.net.URL;
 /**
  *
  */
+// TODO Maybe a candidate for Utils-se
 public final class ResourceUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResourceUtils.class);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Rudy De Busscher
+ * Copyright 2017-2018 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package be.atbash.config.logging;
 
+import be.atbash.util.PublicAPI;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -26,6 +28,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Target({TYPE})
 @Retention(RUNTIME)
+@PublicAPI
 public @interface ModuleConfigName {
     /**
      * Define the value for the name used in the logging.

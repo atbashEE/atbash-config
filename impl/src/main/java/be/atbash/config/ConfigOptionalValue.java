@@ -15,7 +15,8 @@
  */
 package be.atbash.config;
 
-import be.atbash.config.exception.UnexpectedException;
+import be.atbash.util.PublicAPI;
+import be.atbash.util.exception.AtbashUnexpectedException;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 
@@ -29,6 +30,7 @@ import java.lang.reflect.Method;
  * there is a UnknownMethod Exception. This class uses reflection to see if we are running Java 8 MP Config version
  * and is capable of calling the getOptionalValue method through reflection and MethodHandles.
  */
+@PublicAPI
 public final class ConfigOptionalValue {
 
     private static final ConfigOptionalValue INSTANCE = new ConfigOptionalValue();
@@ -72,11 +74,11 @@ public final class ConfigOptionalValue {
                     //When java.util.Optional we are using MP Config.
                     isActive = optionalValueReturnType.getName().endsWith("Optional");
                 } else {
-                    throw new UnexpectedException("getOptionalValue() method not found on Config implementation.");
+                    throw new AtbashUnexpectedException("getOptionalValue() method not found on Config implementation.");
                 }
 
             } catch (NoSuchMethodException e) {
-                throw new UnexpectedException(e);
+                throw new AtbashUnexpectedException(e);
             }
 
             if (isActive) {
@@ -86,7 +88,7 @@ public final class ConfigOptionalValue {
                     mh = lookup.findVirtual(optionalValueReturnType, "orElse",
                             MethodType.methodType(Object.class, Object.class));
                 } catch (NoSuchMethodException | IllegalAccessException e) {
-                    throw new UnexpectedException(e);
+                    throw new AtbashUnexpectedException(e);
                 }
             }
         }
@@ -100,7 +102,7 @@ public final class ConfigOptionalValue {
                 // This converts it to a null when Config Parameter was not found.
                 result = (T) mh.invoke(optionalResult, null);
             } catch (Throwable throwable) {
-                throw new UnexpectedException(throwable);
+                throw new AtbashUnexpectedException(throwable);
             }
             return result;
         }

@@ -18,7 +18,7 @@ package be.atbash.config.spi;
 import be.atbash.config.source.AtbashConfigSource;
 import be.atbash.config.source.ConfigType;
 import be.atbash.config.util.ResourceUtils;
-import be.atbash.config.util.StringUtils;
+import be.atbash.util.StringUtils;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.ConfigSourceProvider;
 
