@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Rudy De Busscher
+ * Copyright 2017-2018 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ class AbstractConfigurationTest extends Specification {
 
     def "GetOptionalValue"() {
         given:
+        TestConfig.registerDefaultConverters()
         TestConfig.addConfigValue("someConfig", "configValue")
 
         when:
