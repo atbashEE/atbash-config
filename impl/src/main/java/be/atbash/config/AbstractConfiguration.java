@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Rudy De Busscher
+ * Copyright 2017-2018 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  */
 package be.atbash.config;
 
-import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.config.ConfigProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -24,17 +24,20 @@ import org.eclipse.microprofile.config.ConfigProvider;
 
 public abstract class AbstractConfiguration {
 
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     /**
      * Reads the configuration property as an optional value, so it is not required to have a value for the key/propertyName, and
      * returns the <code>defaultValue</code> when the value isn't defined.
+     *
      * @param <T>          the property type
      * @param propertyName The configuration propertyName.
      * @param propertyType The type into which the resolve property value should be converted
      * @return the resolved property value as an value of the requested type. (defaultValue when not found)
      */
     protected <T> T getOptionalValue(String propertyName, T defaultValue, Class<T> propertyType) {
-        Config config = ConfigProvider.getConfig();
-        T result = config.getOptionalValue(propertyName, propertyType);
+
+        T result = ConfigOptionalValue.getValue(propertyName, propertyType);
         if (result == null) {
             result = defaultValue;
         }

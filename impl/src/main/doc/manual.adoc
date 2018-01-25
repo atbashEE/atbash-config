@@ -17,6 +17,7 @@ User manual for Atbash configuration.
 . Logging in Java SE.
 . Parameter _atbash.config.log.disabled_ to completely disable logging.
 . Logging no longer contain class name when it contains no _@ConfigEntry_ entries.
+. Fix issue retrieving optional configuration parameter using 'real' MP Config implementation
 
 === 0.9
 
@@ -55,7 +56,7 @@ I kept the original packages and class names but placed them under a different M
 
 === MP Configuration running on Java 7
 
-If you just want to run an implementation of MP configuration on Java 7 (with the Atbash extensions), you can add the following dependency to your application.
+If you just want to run an implementation of MP configuration on Java 7 (without the Atbash extensions), you can add the following dependency to your application.
 
 [source,xml]
 .Plain MP Config for Java 7
@@ -105,6 +106,32 @@ When using The Atbash configuration extension with a 'real' implementation, it i
     </dependency>
 ----
 
+=== Known issues
+
+* Optional config value and a 'real' MP Config implementation
+
+When you are running WildFly Swarm or Payara Micro for example, a Java 8 implementation of the MicroProfile Config is executed.
+Whenever you retrieve an optional value (with _Config.getOptionalValue_ ofr example) you see an exception that the Optional<T> isn't compatible with the defined class.
+
+This is because the Atbash config has changed the _Optional<T>_ return value to _<T>_ and returning null when the config parameter isn't defined.
+
+This is solved by using some reflection tricks when you use one of the following calls.
+
+----
+ConfigOptionalValue.getValue(String, Class<T>)
+----
+
+or when using the _be.atbash.config.AbstractConfiguration_
+
+----
+getOptionalValue(String, Class<T>)
+or
+getOptionalValue(String, T, Class<T>)
+----
+
+Where T is the default value when config parameter is not specified.
+
+This allows your framework or library, created with Java 7 and Atbash Config, to run on a MicroProfile compatible implementation.
 
 == Atbash configuration features
 
@@ -340,7 +367,7 @@ You can overrule this hiding of configuration value by defining the JWM system v
 There are various use cases where it doesn't make sense to show the configuration parameter value.
 
 1. There are some cases that the exact value of the configuration parameter is only known after the application is fully deployed. Or that the value is based on some method calls which aren't available during the logging of the parameters (like calculated URLs of the deployed Web applications)
-
++
 When we define a value for the member **value**, this value is shown instead of executing the method. The text you can place there is anything you like but should be informative why it is not the real value.
 
 2. A second use-case, although even more rare, is that the method has a parameter (after all those methods which provide configuration values are regular methods)

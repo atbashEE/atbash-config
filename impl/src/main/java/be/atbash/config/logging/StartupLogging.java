@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Rudy De Busscher
+ * Copyright 2017-2018 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,8 @@
  */
 package be.atbash.config.logging;
 
+import be.atbash.config.ConfigOptionalValue;
 import be.atbash.config.util.ProxyUtils;
-import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.config.ConfigProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,8 +72,7 @@ public class StartupLogging {
         String logAllProperty = System.getProperty("atbash.config.log.all");
         allLoggingActivated = "true".equalsIgnoreCase(logAllProperty);
 
-        Config config = ConfigProvider.getConfig();
-        Boolean disabledLogging = config.getOptionalValue("atbash.config.log.disabled", Boolean.class);
+        Boolean disabledLogging = ConfigOptionalValue.getValue("atbash.config.log.disabled", Boolean.class);
         loggingDisabled = disabledLogging == null ? false : disabledLogging;
     }
 
