@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2017 Rudy De Busscher
+    Copyright 2017-2018 Rudy De Busscher
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
     limitations under the License.
 
 -->
-
 <!DOCTYPE html
         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -33,6 +32,9 @@
     Value 2 =<h:outputText value="#{configView.value2}"/> <br/>
     Value 2 (int) =<h:outputText value="#{configView.value2Int}"/> <br/>
     Test Only =<h:outputText value="#{configView.testOnly}"/> <br/>
+    Class with Constructor having String parameter =<h:outputText value="#{configView.convTestTypeWStringCt}"/> <br/>
+    Class with static valueOf Method =<h:outputText value="#{configView.convTestTypeWStringValueOf}"/> <br/>
+
 </h:body>
 
 </html>

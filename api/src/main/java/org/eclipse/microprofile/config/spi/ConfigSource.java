@@ -31,6 +31,7 @@
 package org.eclipse.microprofile.config.spi;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>Implement this interfaces to provide a ConfigSource.
@@ -69,6 +70,16 @@ public interface ConfigSource {
      * @return the map containing the properties in this config source
      */
     Map<String, String> getProperties();
+
+    /**
+     * Gets all property names known to this config source, without evaluating the values.
+     * <p>
+     * For backwards compatibility, there is a default implementation that just returns the keys of {@code getProperties()}
+     * slower ConfigSource implementations should replace this with a more performant implementation
+     *
+     * @return the set of property keys that are known to this ConfigSource
+     */
+    Set<String> getPropertyNames();
 
     /**
      * Return the value for the specified property in this config source.

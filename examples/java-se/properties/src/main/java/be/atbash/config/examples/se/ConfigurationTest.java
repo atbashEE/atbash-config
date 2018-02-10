@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Rudy De Busscher
+ * Copyright 2017-2018 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package be.atbash.config.examples.se;
 
+import be.atbash.config.examples.se.testclasses.ConvTestTypeWStringCt;
+import be.atbash.config.examples.se.testclasses.ConvTestTypeWStringValueOf;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 
@@ -36,5 +38,12 @@ public class ConfigurationTest {
         System.out.println("nonExisting=" + config.getOptionalValue("nonExisting", String.class));
         System.out.println("testOnly=" + config.getOptionalValue("testOnly", String.class));
         //System.out.println("nonExisting="+config.getValue("nonExisting", String.class));
+
+        ConvTestTypeWStringCt value = config.getValue("valueForClass", ConvTestTypeWStringCt.class);
+        System.out.println("Class with Constructor having String parameter : " + value.getVal());
+
+        ConvTestTypeWStringValueOf value2 = config.getValue("valueForClass", ConvTestTypeWStringValueOf.class);
+        System.out.println("Class with static valueOf Method : " + value2.getVal());
+
     }
 }

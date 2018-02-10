@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Rudy De Busscher
+ * Copyright 2017-2018 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package be.atbash.config.examples.ee;
 
+import be.atbash.config.examples.ee.testclasses.ConvTestTypeWStringCt;
+import be.atbash.config.examples.ee.testclasses.ConvTestTypeWStringValueOf;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -44,6 +46,14 @@ public class ConfigView {
     @ConfigProperty(name = "testOnly", defaultValue = "Not within Test")
     private String testOnly;
 
+    @Inject
+    @ConfigProperty(name = "valueForClass")
+    private ConvTestTypeWStringCt convTestTypeWStringCt;
+
+    @Inject
+    @ConfigProperty(name = "valueForClass")
+    private ConvTestTypeWStringValueOf convTestTypeWStringValueOf;
+
     public Integer getValue2() {
         return config.getValue("value2", Integer.class);
     }
@@ -58,5 +68,13 @@ public class ConfigView {
 
     public String getTestOnly() {
         return testOnly;
+    }
+
+    public String getConvTestTypeWStringCt() {
+        return convTestTypeWStringCt.getVal();
+    }
+
+    public String getConvTestTypeWStringValueOf() {
+        return convTestTypeWStringValueOf.getVal();
     }
 }

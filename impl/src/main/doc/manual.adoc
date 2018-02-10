@@ -11,6 +11,7 @@ User manual for Atbash configuration.
 
 === 0.9.1
 
+. Upgrade tot MicroProfile Config 1.2 compatible (Class converter and implicit converters)
 . _atbash-config-test_ artifact containing a Map based Config implementation for Unit testing.
 . _AbstractConfiguration_ containing some helper methods to retrieve optional values programmatically.
 . _@ModuleConfigName_ to define the name of the logging instead of the class name.
@@ -21,7 +22,8 @@ User manual for Atbash configuration.
 
 === 0.9
 
-Initial release, based on some extensions written for DeltaSpike logging.
+. Initial release, based on some extensions written for DeltaSpike logging.
+. MicroProfile Config 1.1 compatible
 
 == Introduction
 
@@ -35,7 +37,7 @@ However, there are a few improvements which I need for my applications and let m
 - Flexible date format support
 - And optionally using YAML layout for configuration values to indicate relations between configuration properties.
 
-Atbash Config is compliant with MP Config 1.1 and can be used in Java SE and Java EE (only dependency on CDI) environments.
+Atbash Config is compliant with MP Config and can be used in Java SE and Java EE (only dependency on CDI) environments.
 
 == Ported to Java 7
 

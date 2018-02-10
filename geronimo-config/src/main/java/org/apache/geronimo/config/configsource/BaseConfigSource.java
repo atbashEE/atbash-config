@@ -20,6 +20,7 @@ package org.apache.geronimo.config.configsource;
 
 import org.eclipse.microprofile.config.spi.ConfigSource;
 
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,6 +41,10 @@ public abstract class BaseConfigSource implements ConfigSource {
     @Override
     public int getOrdinal() {
         return ordinal;
+    }
+
+    public Set<String> getPropertyNames() {
+        return getProperties().keySet();
     }
 
     /**

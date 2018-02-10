@@ -16,19 +16,23 @@
  */
 package org.apache.geronimo.config;
 
-import org.apache.geronimo.config.converters.*;
+import org.apache.geronimo.config.converters.ImplicitArrayConverter;
+import org.apache.geronimo.config.converters.MicroProfileTypedConverter;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.Converter;
 
-import javax.annotation.Priority;
 import javax.enterprise.inject.Typed;
 import javax.enterprise.inject.Vetoed;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
+
+import static org.apache.geronimo.config.converters.ImplicitConverter.getImplicitConverter;
 
 /**
  * @author <a href="mailto:struberg@apache.org">Mark Struberg</a>
@@ -36,31 +40,13 @@ import java.util.logging.Logger;
 @Typed
 @Vetoed
 public class ConfigImpl implements Config {
+    private static final String ARRAY_SEPARATOR_REGEX = "(?<!\\\\)" + Pattern.quote(",");
+
     protected Logger logger = Logger.getLogger(ConfigImpl.class.getName());
 
     protected List<ConfigSource> configSources = new ArrayList<>();
-    protected Map<Type, Converter> converters = new HashMap<>();
-
-    public ConfigImpl() {
-        registerDefaultConverter();
-    }
-
-    private void registerDefaultConverter() {
-        converters.put(String.class, StringConverter.INSTANCE);
-        this.converters.put(Boolean.class, BooleanConverter.INSTANCE);
-        this.converters.put(Boolean.TYPE, BooleanConverter.INSTANCE);
-        this.converters.put(Double.class, DoubleConverter.INSTANCE);
-        this.converters.put(Double.TYPE, DoubleConverter.INSTANCE);
-        this.converters.put(Float.class, FloatConverter.INSTANCE);
-        this.converters.put(Float.TYPE, FloatConverter.INSTANCE);
-        this.converters.put(Integer.class, IntegerConverter.INSTANCE);
-        this.converters.put(Integer.TYPE, IntegerConverter.INSTANCE);
-        this.converters.put(Long.class, LongConverter.INSTANCE);
-        this.converters.put(Long.TYPE, LongConverter.INSTANCE);
-
-        converters.put(Date.class, DateConverter.INSTANCE);
-
-    }
+    protected final ConcurrentMap<Type, MicroProfileTypedConverter> converters = new ConcurrentHashMap<>();
+    private final ImplicitArrayConverter implicitArrayConverter = new ImplicitArrayConverter(this);
 
     @Override
     public <T> T getOptionalValue(String propertyName, Class<T> asType) {
@@ -101,19 +87,48 @@ public class ConfigImpl implements Config {
 
     public <T> T convert(String value, Class<T> asType) {
         if (value != null) {
-            Converter<T> converter = getConverter(asType);
+
+            MicroProfileTypedConverter<T> converter = getConverter(asType);
+            if (converter == null) {
+                throw new IllegalArgumentException(String.format("Unable to find converter for type %s", asType.getName()));
+            }
             return converter.convert(value);
         }
-
         return null;
     }
 
-    private <T> Converter getConverter(Class<T> asType) {
-        Converter converter = converters.get(asType);
-        if (converter == null) {
-            throw new IllegalArgumentException("No Converter registered for class " + asType);
+    public <T> List<T> convertList(String rawValue, Class<T> arrayElementType) {
+        MicroProfileTypedConverter<T> converter = getConverter(arrayElementType);
+        String[] parts = rawValue.split(ARRAY_SEPARATOR_REGEX);
+        if (parts.length == 0) {
+            return Collections.emptyList();
         }
-        return converter;
+        List<T> elements = new ArrayList<>(parts.length);
+        for (String part : parts) {
+            part = part.replace("\\,", ",");
+            T converted = converter.convert(part);
+            elements.add(converted);
+        }
+        return elements;
+    }
+
+    private <T> MicroProfileTypedConverter<T> getConverter(Class<T> asType) {
+        MicroProfileTypedConverter<T> result = null;
+        if (converters.containsKey(asType)) {
+            result = converters.get(asType);
+        }
+        if (result == null) {
+            result = handleMissingConverter(asType);
+        }
+        return result;
+    }
+
+    private <T> MicroProfileTypedConverter<T> handleMissingConverter(final Class<T> asType) {
+        if (asType.isArray()) {
+            return new MicroProfileTypedConverter<T>(new ImplicitArrayMPTypedConverter(asType));
+        } else {
+            return getImplicitConverter(asType);
+        }
     }
 
     public ConfigValueImpl<String> access(String key) {
@@ -144,32 +159,11 @@ public class ConfigImpl implements Config {
         configSources = sortDescending(allConfigSources);
     }
 
-    public synchronized void addConverter(Converter<?> converter) {
-        if (converter == null) {
-            return;
-        }
-
-        Type targetType = getTypeOfConverter(converter.getClass());
-        if (targetType == null) {
-            throw new IllegalStateException("Converter " + converter.getClass() + " must be a ParameterisedType");
-        }
-
-        Converter oldConverter = converters.get(targetType);
-        if (oldConverter == null || getPriority(converter) > getPriority(oldConverter)) {
-            converters.put(targetType, converter);
-        }
+    public void addConverter(Type type, MicroProfileTypedConverter<?> converter) {
+        converters.put(type, converter);
     }
 
-    private int getPriority(Converter<?> converter) {
-        int priority = 100;
-        Priority priorityAnnotation = converter.getClass().getAnnotation(Priority.class);
-        if (priorityAnnotation != null) {
-            priority = priorityAnnotation.value();
-        }
-        return priority;
-    }
-
-    public Map<Type, Converter> getConverters() {
+    public Map<Type, MicroProfileTypedConverter> getConverters() {
         return converters;
     }
 
@@ -177,32 +171,37 @@ public class ConfigImpl implements Config {
         Collections.sort(configSources, new Comparator<ConfigSource>() {
             @Override
             public int compare(ConfigSource configSource1, ConfigSource configSource2) {
-                return (configSource1.getOrdinal() > configSource2.getOrdinal()) ? -1 : 1;
+                // ConfigSource.getOrdinal is a default method in original API. When using
+                int ordinal1 = getOrdinal(configSource1);
+                int ordinal2 = getOrdinal(configSource2);
+                return (ordinal1 > ordinal2) ? -1 : 1;
+            }
+
+            private int getOrdinal(ConfigSource configSource) {
+                int result = 100;
+                try {
+                    result = configSource.getOrdinal();
+                } catch (AbstractMethodError e) {
+                    //
+                }
+                return result;
             }
         });
         return configSources;
 
     }
 
-    private Type getTypeOfConverter(Class clazz) {
-        if (clazz.equals(Object.class)) {
-            return null;
+    private class ImplicitArrayMPTypedConverter<T> implements Converter<T> {
+
+        private Class<?> asType;
+
+        public ImplicitArrayMPTypedConverter(Class<?> asType) {
+            this.asType = asType;
         }
 
-        Type[] genericInterfaces = clazz.getGenericInterfaces();
-        for (Type genericInterface : genericInterfaces) {
-            if (genericInterface instanceof ParameterizedType) {
-                ParameterizedType pt = (ParameterizedType) genericInterface;
-                if (pt.getRawType().equals(Converter.class)) {
-                    Type[] typeArguments = pt.getActualTypeArguments();
-                    if (typeArguments.length != 1) {
-                        throw new IllegalStateException("Converter " + clazz + " must be a ParameterisedType");
-                    }
-                    return typeArguments[0];
-                }
-            }
+        @Override
+        public T convert(String value) {
+            return (T) implicitArrayConverter.convert(value, asType);
         }
-
-        return getTypeOfConverter(clazz.getSuperclass());
     }
 }
