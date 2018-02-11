@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package be.atbash.config;
+package org.apache.geronimo.config.cdi;
 
-import be.atbash.util.PublicAPI;
-import be.atbash.util.exception.AtbashUnexpectedException;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 
@@ -30,9 +28,8 @@ import java.lang.reflect.Method;
  * there is a UnknownMethod Exception. This class uses reflection to see if we are running Java 8 MP Config version
  * and is capable of calling the getOptionalValue method through reflection and MethodHandles.
  *
- * Code also available within Atbash Geronimo config. But since they need to be usable independently, code is copied here.
+ * Code also available within Atbash config extension. But since we need it here also and they need to be usable independently, code is copied here.
  */
-@PublicAPI
 public final class ConfigOptionalValue {
 
     private static final ConfigOptionalValue INSTANCE = new ConfigOptionalValue();
@@ -49,6 +46,7 @@ public final class ConfigOptionalValue {
     }
 
     public static <T> T getValue(String key, Class<T> propertyType) {
+
         if (!INSTANCE.mpConfig11JDK8.isActive) {
             return INSTANCE.config.getOptionalValue(key, propertyType);
         } else {
@@ -76,11 +74,11 @@ public final class ConfigOptionalValue {
                     //When java.util.Optional we are using MP Config.
                     isActive = optionalValueReturnType.getName().endsWith("Optional");
                 } else {
-                    throw new AtbashUnexpectedException("getOptionalValue() method not found on Config implementation.");
+                    throw new RuntimeException("getOptionalValue() method not found on Config implementation.");
                 }
 
             } catch (NoSuchMethodException e) {
-                throw new AtbashUnexpectedException(e);
+                throw new RuntimeException(e);
             }
 
             if (isActive) {
@@ -90,7 +88,7 @@ public final class ConfigOptionalValue {
                     mh = lookup.findVirtual(optionalValueReturnType, "orElse",
                             MethodType.methodType(Object.class, Object.class));
                 } catch (NoSuchMethodException | IllegalAccessException e) {
-                    throw new AtbashUnexpectedException(e);
+                    throw new RuntimeException(e);
                 }
             }
         }
@@ -104,7 +102,7 @@ public final class ConfigOptionalValue {
                 // This converts it to a null when Config Parameter was not found.
                 result = (T) mh.invoke(optionalResult, null);
             } catch (Throwable throwable) {
-                throw new AtbashUnexpectedException(throwable);
+                throw new RuntimeException(throwable);
             }
             return result;
         }

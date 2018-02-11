@@ -98,13 +98,11 @@ public class ConfigExtension implements Extension {
 
         config = ConfigProvider.getConfig();
 
-        /*
-        FIXME
         for (InjectionPoint injectionPoint : injectionPoints) {
             Type type = injectionPoint.getType();
 
             // replace native types with their Wrapper types
-            type = REPLACED_TYPES.getOrDefault(type, type);
+            type = useReplacedTypes(type);
 
             ConfigProperty configProperty = injectionPoint.getAnnotated().getAnnotation(ConfigProperty.class);
             if (type instanceof Class) {
@@ -112,7 +110,7 @@ public class ConfigExtension implements Extension {
                 // that means a Converter must exist.
                 String key = ConfigInjectionBean.getConfigKey(injectionPoint, configProperty);
                 if ((isDefaultUnset(configProperty.defaultValue()))
-                        && !config.getOptionalValue(key, (Class) type).isPresent()) {
+                        && ConfigOptionalValue.getValue(key, (Class) type) == null) {
                     deploymentProblems.add("No Config Value exists for " + key);
                 }
             }
@@ -120,10 +118,28 @@ public class ConfigExtension implements Extension {
 
         if (!deploymentProblems.isEmpty()) {
             add.addDeploymentProblem(new DeploymentException("Error while validating Configuration\n"
-                    + String.join("\n", deploymentProblems)));
+                    + stringJoining("\n", deploymentProblems)));
         }
-        */
 
+    }
+
+    private String stringJoining(String joiningToken, List<String> deploymentProblems) {
+        StringBuilder result = new StringBuilder();
+        for (String deploymentProblem : deploymentProblems) {
+            if (result.length() > 0) {
+                result.append(joiningToken);
+            }
+            result.append(deploymentProblem);
+        }
+        return result.toString();
+    }
+
+    private Type useReplacedTypes(Type type) {
+        Type result = REPLACED_TYPES.get(type);
+        if (result == null) {
+            result = type;
+        }
+        return result;
     }
 
     public void shutdown(@Observes BeforeShutdown bsd) {
