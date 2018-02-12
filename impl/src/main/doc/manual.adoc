@@ -11,7 +11,7 @@ User manual for Atbash configuration.
 
 === 0.9.1
 
-. Upgrade tot MicroProfile Config 1.2 compatible (Class converter and implicit converters)
+. Upgrade to MicroProfile Config 1.2 compatible (Class converter and implicit converters)
 . _atbash-config-test_ artifact containing a Map based Config implementation for Unit testing.
 . _AbstractConfiguration_ containing some helper methods to retrieve optional values programmatically.
 . _@ModuleConfigName_ to define the name of the logging instead of the class name.
@@ -341,6 +341,28 @@ Config implementation: be.atbash.config.examples.ee.configname.ParentConfig
    value:	Parent Config Value
 
 ----
+
+=== Advanced ClassConverter
+
+Atbash Configuration Extension (artifact atbash-config) Class converter uses the advanced Class loading features of Atbash SE.
+
+So the following example
+
+----
+Class<?> aClass = config.getValue("someClassName", Class.class);
+
+or
+
+@Inject
+@ConfigProperty(name = "someClassName")
+private Class<?> aClass;
+----
+
+will search for the Fully Qualified Class name with
+
+. Current thread Class Loader
+. ClassLoader containing the class be.atbash.util.reflection.ClassUtils
+. System class loader
 
 === Advanced logging features
 

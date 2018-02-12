@@ -45,5 +45,7 @@ public class ConfigurationTest {
         ConvTestTypeWStringValueOf value2 = config.getValue("valueForClass", ConvTestTypeWStringValueOf.class);
         System.out.println("Class with static valueOf Method : " + value2.getVal());
 
+        Class<?> aClass = config.getValue("classname", Class.class);
+        System.out.println(aClass.getName());
     }
 }
