@@ -66,6 +66,76 @@
 
     </modules>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>clirr-maven-plugin</artifactId>
+                <version>2.8</version>
+                <configuration>
+                    <ignored>
+                        <!-- API -->
+                        <difference>
+                            <!-- Added in 1.2 -->
+                            <className>org/eclipse/microprofile/config/spi/ConfigBuilder</className>
+                            <differenceType>7012</differenceType>
+                            <method>org.eclipse.microprofile.config.spi.ConfigBuilder withConverter(java.lang.Class,
+                                int, org.eclipse.microprofile.config.spi.Converter)
+                            </method>
+                        </difference>
+                        <difference>
+                            <!-- Forgotten in 0.9.0 -->
+                            <className>org/eclipse/microprofile/config/spi/ConfigSource</className>
+                            <differenceType>7012</differenceType>
+                            <method>java.util.Set getPropertyNames()</method>
+                        </difference>
+
+                        <!-- Geronimo config -->
+                        <difference>
+                            <!--Internal -->
+                            <className>org/apache/geronimo/config/ConfigImpl</className>
+                            <differenceType>6006</differenceType>
+                            <field>converters</field>
+                        </difference>
+                        <difference>
+                            <!--Internal -->
+                            <className>org/apache/geronimo/config/ConfigImpl</className>
+                            <differenceType>6004</differenceType>
+                            <field>converters</field>
+                            <from>java.util.Map</from>
+                            <to>java.util.concurrent.ConcurrentMap</to>
+                        </difference>
+                        <difference>
+                            <!--Internal -->
+                            <className>org/apache/geronimo/config/ConfigImpl</className>
+                            <differenceType>7004</differenceType>
+                            <method>void addConverter(org.eclipse.microprofile.config.spi.Converter)</method>
+                        </difference>
+                        <difference>
+                            <!--Internal -->
+                            <className>org/apache/geronimo/config/DefaultConfigBuilder</className>
+                            <differenceType>6010</differenceType>
+                            <field>forClassLoader</field>
+                        </difference>
+
+                        <!-- atbash config extensions-->
+                        <difference>
+                            <!-- Moved to Atbash utils se -->
+                            <className>be/atbash/config/util/ClassUtils</className>
+                            <differenceType>8001</differenceType>
+                        </difference>
+                        <difference>
+                            <!-- Moved to Atbash utils se -->
+                            <className>be/atbash/config/util/StringUtils</className>
+                            <differenceType>8001</differenceType>
+                        </difference>
+
+                    </ignored>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <profile>
             <id>release</id>

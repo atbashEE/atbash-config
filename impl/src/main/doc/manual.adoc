@@ -530,6 +530,17 @@ Probably you want the default converters in place so that you can retrieve the c
 
 Additional converters can be registered by the **registerConverter(Converter<?>)** method. And all the converters are removed by the **deregisterAllConverters()** method.
 
+== Backwards Compatibility
+
+=== 0.9.1
+
+No blocking issues except you created a custom ConfigBuilder or custom ConfigSource
+
+(See also pom.xml for the CLIRR analysis)
+
+- ConfigBuilder interface has new method withConverter()
+- ConfigSource interface has additional method getPropertyNames().
+
 == Roadmap before 1.0
 
 - More tests
