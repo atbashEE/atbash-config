@@ -78,13 +78,34 @@ public class AtbashConfigSource extends AbstractConfigSource {
         Map<String, String> result = new HashMap<>();
         for (Map.Entry<String, Object> entry : values.entrySet()) {
             if (entry.getValue() instanceof List) {
+                List<?> listEntry = (List<?>) entry.getValue();
+                if (listEntry.get(0) instanceof String) {
+                    result.put(entry.getKey(), assembleStringList(listEntry));
+                }
                 // We can't support this type of properties constructs
-                LOG.warn(String.format("Not supported type List found for key %s within YAML configuration file", entry.getKey()));
+                LOG.warn(String.format("No support for List of type %s, found for key %s within YAML configuration file",
+                        listEntry.get(0).getClass().getName(), entry.getKey()));
             } else {
-                result.put(entry.getKey(), entry.getValue().toString());
+                if (entry.getValue() == null) {
+                    LOG.warn(String.format("Empty value for parameter key %s", entry.getKey()));
+                } else {
+                    result.put(entry.getKey(), entry.getValue().toString());
+                }
+
             }
         }
         return result;
+    }
+
+    private String assembleStringList(List<?> listEntry) {
+        StringBuilder result = new StringBuilder();
+        for (Object item : listEntry) {
+            if (result.length() > 0) {
+                result.append(", ");
+            }
+            result.append(item.toString());
+        }
+        return result.toString();
     }
 
     private static String convertStreamToString(InputStream is) {
