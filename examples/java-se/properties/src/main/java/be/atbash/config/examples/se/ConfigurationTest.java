@@ -47,5 +47,20 @@ public class ConfigurationTest {
 
         Class<?> aClass = config.getValue("classname", Class.class);
         System.out.println(aClass.getName());
+
+        String[] pets = config.getValue("pets", String[].class);
+        System.out.print("pets : ");
+        for (String pet : pets) {
+            System.out.print(pet + ", ");
+        }
+        System.out.println();
+
+        Pet[] petArray = config.getValue("pets", Pet[].class);
+        System.out.print("pets (Object) : ");
+        for (Pet pet : petArray) {
+            System.out.print(pet + ", ");
+        }
+        System.out.println();
+
     }
 }

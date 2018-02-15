@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Rudy De Busscher
+ * Copyright 2017-2018 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,5 +35,13 @@ public class ConfigurationTest {
         System.out.println("test.only=" + config.getOptionalValue("test.only", String.class));
         System.out.println("nonExisting=" + config.getOptionalValue("nonExisting", String.class));
         //System.out.println("nonExisting="+config.getValue("nonExisting", String.class)); ;
+
+        String[] pets = config.getValue("pets", String[].class);
+        System.out.print("pets : ");
+        for (String pet : pets) {
+            System.out.print(pet + ", ");
+        }
+        System.out.println();
+
     }
 }

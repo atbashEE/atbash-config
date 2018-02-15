@@ -23,6 +23,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.List;
 
 /**
  *
@@ -54,6 +55,10 @@ public class ConfigView {
     @ConfigProperty(name = "valueForClass")
     private ConvTestTypeWStringValueOf convTestTypeWStringValueOf;
 
+    @Inject
+    @ConfigProperty(name = "pets")
+    private List<String> pets;
+
     public Integer getValue2() {
         return config.getValue("value2", Integer.class);
     }
@@ -76,5 +81,16 @@ public class ConfigView {
 
     public String getConvTestTypeWStringValueOf() {
         return convTestTypeWStringValueOf.getVal();
+    }
+
+    public String getPets() {
+        StringBuilder result = new StringBuilder();
+        for (String pet : pets) {
+            if (result.length() > 0) {
+                result.append(", ");
+            }
+            result.append(pet);
+        }
+        return result.toString();
     }
 }
