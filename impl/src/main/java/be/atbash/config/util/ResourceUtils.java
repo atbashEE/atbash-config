@@ -109,7 +109,7 @@ public final class ResourceUtils {
      * @return the InputStraem for the specified resource.
      * @throws IOException if there is a problem acquiring the resource at the specified path.
      */
-    private static InputStream getInputStreamForPath(String resourcePath) throws IOException {
+    public static InputStream getInputStreamForPath(String resourcePath) throws IOException {
 
         InputStream is;
         if (resourcePath.startsWith(CLASSPATH_PREFIX)) {
