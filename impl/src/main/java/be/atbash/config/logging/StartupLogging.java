@@ -16,7 +16,7 @@
 package be.atbash.config.logging;
 
 import be.atbash.config.ConfigOptionalValue;
-import be.atbash.config.util.ProxyUtils;
+import be.atbash.util.ProxyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
