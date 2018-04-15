@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 cd impl
 mvn license:format
+cd ../client
+mvn license:format
 cd ../test
 mvn license:format
 cd ../examples

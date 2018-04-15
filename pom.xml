@@ -75,6 +75,7 @@
         <module>geronimo-config</module>
         <module>test</module>
         <module>impl</module>
+        <module>client</module>
         <module>examples</module>
 
     </modules>
