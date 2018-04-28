@@ -87,12 +87,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
-        </dependency>
-
-        <dependency>
             <groupId>be.atbash.config</groupId>
             <artifactId>atbash-config-test</artifactId>
             <version>${project.parent.version}</version>
