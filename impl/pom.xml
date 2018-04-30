@@ -61,7 +61,7 @@
         <dependency>
             <groupId>be.atbash.utils</groupId>
             <artifactId>utils-se</artifactId>
-            <version>0.9.1-SNAPSHOT</version>
+            <version>${atbash-utils.version}</version>
         </dependency>
 
         <dependency>
