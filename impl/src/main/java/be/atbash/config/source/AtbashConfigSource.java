@@ -127,17 +127,17 @@ public class AtbashConfigSource extends AbstractConfigSource {
     }
 
     private Map<String, String> handlePropertiesFile(InputStream inputStream) {
-        Properties properties = new Properties();
+        Properties propertiesFromFile = new Properties();
         try {
-            properties.load(inputStream);
+            propertiesFromFile.load(inputStream);
         } catch (IOException e) {
             throw new ConfigurationLoadingException(e.getMessage());
         }
 
         Map<String, String> result = new HashMap<>();
 
-        for (final String name : properties.stringPropertyNames()) {
-            result.put(name, properties.getProperty(name));
+        for (final String name : propertiesFromFile.stringPropertyNames()) {
+            result.put(name, propertiesFromFile.getProperty(name));
         }
         return result;
     }

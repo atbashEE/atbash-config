@@ -37,7 +37,7 @@ import java.util.List;
 @ApplicationScoped
 public class StartupLogging {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(StartupLogging.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StartupLogging.class);
 
     private String separator = System.getProperty("line.separator");
 
@@ -203,10 +203,9 @@ public class StartupLogging {
                 }
 
             }
-        } catch (IllegalAccessException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            // Exception converted in business logic here.
             info.append("   value:\t[unknown]");
-        } catch (InvocationTargetException e) {
-            info.append("   value:\t [unknown]");
         }
     }
 

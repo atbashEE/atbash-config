@@ -73,6 +73,7 @@ public final class ResourceUtils {
                 try {
                     stream.close();
                 } catch (IOException ignored) {
+                    // ignored
                 }
             }
         }
@@ -155,7 +156,7 @@ public final class ResourceUtils {
     }
 
     private static String stripPrefix(String resourcePath) {
-        return resourcePath.substring(resourcePath.indexOf(":") + 1);
+        return resourcePath.substring(resourcePath.indexOf(':') + 1);
     }
 
     /**

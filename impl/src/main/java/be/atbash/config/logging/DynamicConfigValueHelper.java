@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Rudy De Busscher
+ * Copyright 2017-2018 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ public class DynamicConfigValueHelper {
         String result = data;
         if (data.startsWith("{")) {
             int idx = data.indexOf('}');
-            int truncateLength = Integer.valueOf(data.substring(1, idx));
+            int truncateLength = Integer.parseInt(data.substring(1, idx));
             if (truncateLength <= 0) {
                 result = "[Dynamic value]";
             } else {
