@@ -60,28 +60,21 @@ public final class ResourceUtils {
      * @return {@code true} if the resource at the specified path exists, {@code false} otherwise.
      */
     public static boolean resourceExists(String resourcePath) {
-        InputStream stream = null;
-        boolean exists = false;
 
-        try {
-            stream = getInputStream(resourcePath);
-            exists = stream != null;
-        } catch (IOException e) {
-            stream = null;
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException ignored) {
-                    // ignored
-                }
+        InputStream stream = getInputStream(resourcePath);
+        boolean exists = stream != null;
+        if (stream != null) {
+            try {
+                stream.close();
+            } catch (IOException ignored) {
+                // ignored
             }
         }
 
         return exists;
     }
 
-    public static InputStream getInputStream(String path) throws IOException {
+    public static InputStream getInputStream(String path) {
         // FIXME Refactor in resource API
         InputStream result = null;
         if (StringUtils.hasText(path)) {
