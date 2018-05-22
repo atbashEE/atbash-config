@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Rudy De Busscher
+ * Copyright 2017-2018 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,6 +92,7 @@ public class TestConfig implements Config {
         converters.put(Long.TYPE, LongConverter.INSTANCE);
 
         converters.put(Date.class, DateConverter.INSTANCE);
+        converters.put(Class.class, ClassConverter.INSTANCE);
 
     }
 
