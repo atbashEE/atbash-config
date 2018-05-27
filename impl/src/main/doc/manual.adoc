@@ -1,6 +1,6 @@
 = Atbash Configuration
 Rudy De Busscher <rdebusscher@gmail.com>
-v0.9.1.1, 30/04/2018
+v0.9.2, ??/??/2018
 :example-caption!:
 ifndef::imagesdir[:imagesdir: images]
 ifndef::sourcedir[:sourcedir: ../../main/java]
@@ -8,6 +8,9 @@ ifndef::sourcedir[:sourcedir: ../../main/java]
 User manual for Atbash configuration.
 
 == Release Notes
+
+. Defining base name with config is now optional for Config extensions (ServiceLoader config not required) Only date format can be used on default _microprofile-config.properties_ file for the moment.
+. Added missing ClassConverter for TestConfig
 
 === 0.9.1.1
 

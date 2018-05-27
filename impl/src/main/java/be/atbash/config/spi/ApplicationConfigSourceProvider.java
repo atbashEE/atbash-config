@@ -47,7 +47,7 @@ public class ApplicationConfigSourceProvider implements ConfigSourceProvider {
     @Override
     public Iterable<ConfigSource> getConfigSources(ClassLoader forClassLoader) {
         if (baseConfigurationNames.isEmpty()) {
-            throw new MissingServiceLoaderConfigurationException();
+            return Collections.emptyList();
         }
 
         List<ConfigSource> result = new ArrayList<>();

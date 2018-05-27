@@ -22,18 +22,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>be.atbash.config</groupId>
-        <artifactId>config-examples</artifactId>
+        <groupId>be.atbash.config.examples</groupId>
+        <artifactId>examples-se</artifactId>
         <version>0.9.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>be.atbash.config.examples</groupId>
-    <artifactId>examples-se</artifactId>
+    <groupId>be.atbash.config.examples.se</groupId>
+    <artifactId>config-optional-basename</artifactId>
     <version>0.9.2-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
-    <name>Atbash configuration examples for Java SE</name>
+    <name>Atbash configuration examples for Java SE - Optional basename</name>
 
     <licenses>
         <license>
@@ -44,14 +44,30 @@
         </license>
     </licenses>
 
-    <modules>
-        <module>properties</module>
-        <module>yaml</module>
-        <module>optionalBaseName</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+
+        <dependency>
+            <groupId>be.atbash.config</groupId>
+            <artifactId>geronimo-config</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+    </dependencies>
+
     <build>
         <plugins>
-            <!-- don't need to deploy the POM to nexus. -->
+            <!-- don't need to deploy the JAR to nexus. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
@@ -68,6 +84,7 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+
 
         </plugins>
     </build>

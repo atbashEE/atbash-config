@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Rudy De Busscher
+ * Copyright 2017-2018 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package be.atbash.config.spi;
+package be.atbash.config.examples.se;
 
-import be.atbash.config.exception.ConfigurationException;
+import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.ConfigProvider;
+
+import java.util.Date;
 
 /**
  *
  */
 
-class MissingServiceLoaderConfigurationException extends ConfigurationException {
+public class ConfigurationTest {
 
-    MissingServiceLoaderConfigurationException() {
-        super("Missing configuration of interface be.atbash.config.spi.BaseConfigurationName through ServiceLoader.");
+    public static void main(String[] args) {
+        Config config = ConfigProvider.getConfig();
+
+        System.out.println("dateValue=" + config.getValue("dateValue", Date.class));
+
     }
 }
