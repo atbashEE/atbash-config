@@ -162,7 +162,10 @@ public class DefaultConfigBuilder implements ConfigBuilder {
 
         configSources.add(new SystemEnvConfigSource());
         configSources.add(new SystemPropertyConfigSource());
+        // Java EE variant
         configSources.addAll(new PropertyFileConfigSourceProvider("/META-INF/microprofile-config.properties", true, forClassLoader).getConfigSources(forClassLoader));
+        // Java SE variant
+        configSources.addAll(new PropertyFileConfigSourceProvider("META-INF/microprofile-config.properties", true, forClassLoader).getConfigSources(forClassLoader));
 
         return configSources;
     }
