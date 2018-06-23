@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Rudy De Busscher
+ * Copyright 2017-2018 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ class StartupLoggingTest extends Specification {
 
     def getConfigInfo_AllLogging() throws NoSuchFieldException, IllegalAccessException {
         given:
-        System.setProperty("atbash.config.log.all", "tRue");
+        System.setProperty("atbash.config.log.all", "tRue")
 
         Field allLoggingActivated = logging.getClass().getDeclaredField("allLoggingActivated")
         allLoggingActivated.setAccessible(true)

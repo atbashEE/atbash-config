@@ -52,7 +52,7 @@ public class ConfigInjectionBean<T> implements Bean<T>, PassivationCapable {
     private final String id;
 
     /**
-     * only access via {@link #getConfig(}
+     * only access via {@link #getConfig()}
      */
     private ConfigImpl _config;
 
