@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
  * MP Config is using {@code Optional} as return type for the getOptionalValue(). But since we are compiling for Java 7
  * there is a UnknownMethod Exception. This class uses reflection to see if we are running Java 8 MP Config version
  * and is capable of calling the getOptionalValue method through reflection and MethodHandles.
- *
+ * <p>
  * Code also available within Atbash Geronimo config. But since they need to be usable independently, code is copied here.
  */
 @PublicAPI
@@ -67,7 +67,7 @@ public final class ConfigOptionalValue {
         MPConfig11JDK8(Config config) {
             // The return type of the getOptionalValue method (on MP Config it is Optional so that we now we are using MP Config
             // And can define a MethodHandle to the orElse method.
-            Class<?> optionalValueReturnType = null;
+            Class<?> optionalValueReturnType;
             try {
                 getOptionalValueMethod = config.getClass().getMethod("getOptionalValue", String.class, Class.class);
                 // The following if is for safety

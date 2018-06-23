@@ -40,7 +40,7 @@ public class DefaultConfigProvider extends ConfigProviderResolver {
 
     @Override
     public Config getConfig() {
-        return getConfig(null);
+        return getConfig(Thread.currentThread().getContextClassLoader());
     }
 
     @Override
@@ -99,6 +99,14 @@ public class DefaultConfigProvider extends ConfigProviderResolver {
                     if (entry.getValue().get() != null && entry.getValue().get() == config) {
                         it.remove();
                         break;
+                    }
+                }
+
+                if (config instanceof AutoCloseable) {
+                    try {
+                        ((AutoCloseable) config).close();
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error while closing Config", e);
                     }
                 }
             }

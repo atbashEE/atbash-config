@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 @PublicAPI
 public abstract class AbstractConfiguration {
 
+    // TODO Can be removed
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**

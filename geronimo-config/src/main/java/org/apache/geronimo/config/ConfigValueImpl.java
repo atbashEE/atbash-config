@@ -16,21 +16,18 @@
  */
 package org.apache.geronimo.config;
 
-import org.apache.geronimo.config.converters.MicroProfileTypedConverter;
+import org.eclipse.microprofile.config.spi.Converter;
 
 import javax.enterprise.inject.Typed;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
+import javax.enterprise.inject.Vetoed;
+import java.util.*;
 
 /**
  * @author <a href="mailto:struberg@apache.org">Mark Struberg</a>
  */
 @Typed
+@Vetoed
 public class ConfigValueImpl<T> {
-    private static final Logger logger = Logger.getLogger(ConfigValueImpl.class.getName());
 
     private final ConfigImpl config;
 
@@ -40,14 +37,24 @@ public class ConfigValueImpl<T> {
 
     private Class<?> configEntryType = String.class;
 
-    private String[] lookupChain;
-
     private boolean evaluateVariables = false;
 
-    private long cacheTimeMs = -1;
+    private long cacheTimeNs = -1;
     private volatile long reloadAfter = -1;
+    private long lastReloadedAt = -1;
     private T lastValue = null;
-    private ConfigChanged valueChangeListener;
+    // private ConfigChanged valueChangeListener;
+
+    private boolean isList;
+    private boolean isSet;
+
+    private T defaultValue;
+    private boolean withDefault;
+
+    /**
+     * Alternative Converter to be used instead of the default converter
+     */
+    private Converter<T> converter;
 
     public ConfigValueImpl(ConfigImpl config, String key) {
         this.config = config;
@@ -61,8 +68,39 @@ public class ConfigValueImpl<T> {
     }
 
     //X @Override
-    public ConfigValueImpl<T> cacheFor(long value, TimeUnit timeUnit) {
-        this.cacheTimeMs = timeUnit.toMillis(value);
+    public ConfigValueImpl<List<T>> asList() {
+        isList = true;
+        ConfigValueImpl<List<T>> listTypedResolver = (ConfigValueImpl<List<T>>) this;
+
+        if (defaultValue == null) {
+            // the default for lists is an empty list instead of null
+            return listTypedResolver.withDefault(Collections.<T>emptyList());
+        }
+
+        return listTypedResolver;
+    }
+
+    //X @Override
+    public ConfigValueImpl<T> withDefault(T value) {
+        defaultValue = value;
+        withDefault = true;
+        return this;
+    }
+
+    //X @Override
+    public ConfigValueImpl<T> withStringDefault(String value) {
+        if (value == null || value.isEmpty()) {
+            throw new RuntimeException("Empty String or null supplied as string-default value for property "
+                    + keyOriginal);
+        }
+        value = replaceVariables(value);
+
+        if (isList) {
+            defaultValue = splitAndConvertListValue(value);
+        } else {
+            defaultValue = convert(value);
+        }
+        withDefault = true;
         return this;
     }
 
@@ -72,58 +110,43 @@ public class ConfigValueImpl<T> {
         return this;
     }
 
-    public ConfigValueImpl<T> withLookupChain(String... postfixNames) {
-        this.lookupChain = postfixNames;
-        return this;
-    }
-
-    //X @Override
-    public T get() {
-        T val = getValue();
-        if (val == null) {
-            throw new NoSuchElementException("No config value present for key " + keyOriginal);
-        }
-        return val;
-    }
-
-    //X @Override
-    public T getOptional() {
-        return getValue();
-    }
-
-    //X @Override
-    public ConfigValueImpl<T> onChange(ConfigChanged valueChangeListener) {
-        this.valueChangeListener = valueChangeListener;
-        return this;
-    }
-
-    //X @Override
-    public List<T> getValueList() {
-        String rawList = (String) getValue(false);
-        List<T> values = new ArrayList<T>();
-        StringBuilder sb = new StringBuilder(64);
-        for (int i = 0; i < rawList.length(); i++) {
-            char c = rawList.charAt(i);
-            if ('\\' == c) {
-                if (i == rawList.length()) {
-                    throw new IllegalStateException("incorrect escaping of key " + keyOriginal + " value: " + rawList);
+    private T get(boolean convert) {
+        long now = -1;
+        if (cacheTimeNs > 0) {
+            now = System.nanoTime();
+            if (now <= reloadAfter) {
+                // now check if anything in the underlying Config got changed
+                long lastCfgChange = config.getLastChanged();
+                if (lastCfgChange < lastReloadedAt) {
+                    return lastValue;
                 }
-                char nextChar = rawList.charAt(i + 1);
-                if (nextChar == '\\') {
-                    sb.append('\\');
-                } else if (nextChar == ',') {
-                    sb.append(',');
-                }
-                i++;
-            } else if (',' == c) {
-                addListValue(values, sb);
-            } else {
-                sb.append(c);
             }
         }
-        addListValue(values, sb);
 
-        return values;
+        String valueStr = resolveStringValue();
+
+        if ((valueStr == null || valueStr.isEmpty()) && withDefault) {
+            return defaultValue;
+        }
+
+        T value;
+        if (isList || isSet) {
+            value = splitAndConvertListValue(valueStr);
+            if (isSet) {
+                value = (T) new HashSet((List) value);
+            }
+        } else {
+            value = convert ? convert(valueStr) : (T) valueStr;
+        }
+
+        lastValue = value;
+
+        if (cacheTimeNs > 0) {
+            reloadAfter = now + cacheTimeNs;
+            lastReloadedAt = now;
+        }
+
+        return value;
     }
 
     private void addListValue(List<T> values, StringBuilder sb) {
@@ -134,90 +157,101 @@ public class ConfigValueImpl<T> {
         sb.setLength(0);
     }
 
-    public T getValue() {
-        return getValue(true);
+    public T get() {
+        return get(true);
     }
 
-    private T getValue(boolean convert) {
-        long now = -1;
-        if (cacheTimeMs > 0) {
-            now = System.currentTimeMillis();
-            if (now <= reloadAfter) {
-                return lastValue;
-            }
+    //X @Override
+    public T getValue() {
+        T val = get();
+        if (val == null) {
+            throw new NoSuchElementException("No config value present for key " + keyOriginal);
         }
-
-        String valueStr = resolveStringValue();
-        T value = convert ? convert(valueStr) : (T) valueStr;
-
-        if (valueChangeListener != null && (value != null && !value.equals(lastValue) || (value == null && lastValue != null))) {
-            valueChangeListener.onValueChange(keyOriginal, lastValue, value);
-        }
-
-        lastValue = value;
-
-        if (cacheTimeMs > 0) {
-            reloadAfter = now + cacheTimeMs;
-        }
-
-        return value;
+        return val;
     }
 
     private String resolveStringValue() {
-        //X TODO implement lookupChain
+        String value = null;
 
-        String value = config.getValue(keyOriginal);
-        if (evaluateVariables) {
-            // recursively resolve any ${varName} in the value
-            int startVar = 0;
-            while ((startVar = value.indexOf("${", startVar)) >= 0) {
-                int endVar = value.indexOf("}", startVar);
-                if (endVar <= 0) {
-                    break;
-                }
-                String varName = value.substring(startVar + 2, endVar);
-                if (varName.isEmpty()) {
-                    break;
-                }
-                String variableValue = config.access(varName).evaluateVariables(true).get();
-                if (variableValue != null) {
-                    value = value.replace("${" + varName + "}", variableValue);
-                }
-                startVar++;
-            }
+        if (value == null) {
+            value = config.getValue(keyOriginal);
+            this.keyResolved = keyOriginal;
+        }
+
+        if (evaluateVariables && value != null) {
+            value = replaceVariables(value);
+
         }
         return value;
     }
 
-    //X @Override
-    public String getKey() {
-        return keyOriginal;
-    }
-
-    //X @Override
-    public String getResolvedKey() {
-        return keyResolved;
+    private String replaceVariables(String value) {
+        // recursively resolve any ${varName} in the value
+        int startVar = 0;
+        while ((startVar = value.indexOf("${", startVar)) >= 0) {
+            int endVar = value.indexOf("}", startVar);
+            if (endVar <= 0) {
+                break;
+            }
+            String varName = value.substring(startVar + 2, endVar);
+            if (varName.isEmpty()) {
+                break;
+            }
+            String variableValue = config.access(varName).evaluateVariables(true).get();
+            if (variableValue != null) {
+                value = value.replace("${" + varName + "}", variableValue);
+            }
+            startVar++;
+        }
+        return value;
     }
 
     private T convert(String value) {
+        if (converter != null) {
+            return converter.convert(value);
+        }
+
         if (String.class == configEntryType) {
             return (T) value;
         }
 
-        MicroProfileTypedConverter converter = config.getConverters().get(configEntryType);
-        if (converter == null) {
-            throw new IllegalStateException("No Converter for type " + configEntryType);
-        }
-
-        return (T) converter.convert(value);
+        return (T) config.convert(value, configEntryType);
     }
 
-    /**
-     * TODO feedback from gunnar: could be interesting to have this functionality also as Config#onChange(ConfigChanged)
-     * Callback which can be used with {@link #onChange(ConfigChanged)}
-     */
-    interface ConfigChanged {
-        <T> void onValueChange(String key, T oldValue, T newValue);
+    private T splitAndConvertListValue(String valueStr) {
+        if (valueStr == null) {
+            return null;
+        }
+
+        List list = new ArrayList();
+        StringBuilder currentValue = new StringBuilder();
+        int length = valueStr.length();
+        for (int i = 0; i < length; i++) {
+            char c = valueStr.charAt(i);
+            if (c == '\\') {
+                if (i < length - 1) {
+                    char nextC = valueStr.charAt(i + 1);
+                    currentValue.append(nextC);
+                    i++;
+                }
+            } else if (c == ',') {
+                String trimedVal = currentValue.toString().trim();
+                if (trimedVal.length() > 0) {
+                    list.add(convert(trimedVal));
+                }
+
+                currentValue.setLength(0);
+            } else {
+                currentValue.append(c);
+            }
+        }
+
+        String trimmedVal = currentValue.toString().trim();
+        if (trimmedVal.length() > 0) {
+            list.add(convert(trimmedVal));
+        }
+
+        return (T) list;
     }
 
 }

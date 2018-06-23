@@ -19,7 +19,6 @@ package org.apache.geronimo.config;
 import org.apache.geronimo.config.configsource.PropertyFileConfigSourceProvider;
 import org.apache.geronimo.config.configsource.SystemEnvConfigSource;
 import org.apache.geronimo.config.configsource.SystemPropertyConfigSource;
-import org.apache.geronimo.config.converters.*;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigBuilder;
 import org.eclipse.microprofile.config.spi.ConfigSource;
@@ -30,7 +29,6 @@ import javax.enterprise.inject.Typed;
 import javax.enterprise.inject.Vetoed;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.net.URL;
 import java.util.*;
 
 import static java.util.Arrays.asList;
@@ -44,14 +42,11 @@ import static java.util.Arrays.asList;
 public class DefaultConfigBuilder implements ConfigBuilder {
     private ClassLoader forClassLoader;
     private final List<ConfigSource> sources = new ArrayList<>();
+    private final List<Converter<?>> converters = new ArrayList<>();
+    private final Map<Class<?>, PrioritisedConverter> prioritisedConverters = new HashMap<>();
     private boolean ignoreDefaultSources = true;
     private boolean ignoreDiscoveredSources = true;
     private boolean ignoreDiscoveredConverters = true;
-    private final Map<Type, MicroProfileTypedConverter<?>> registeredConverters = new HashMap<>();
-
-    public DefaultConfigBuilder() {
-        this.registerDefaultConverters();
-    }
 
     @Override
     public ConfigBuilder addDefaultSources() {
@@ -79,24 +74,26 @@ public class DefaultConfigBuilder implements ConfigBuilder {
 
     @Override
     public ConfigBuilder withConverters(Converter<?>... converters) {
-        for (Converter<?> converter : converters) {
-            Type typeOfConverter = getTypeOfConverter(converter.getClass());
-            registerConverter(typeOfConverter, new MicroProfileTypedConverter<>(converter));
-        }
+        this.converters.addAll(asList(converters));
         return this;
     }
 
     @Override
     public <T> ConfigBuilder withConverter(Class<T> type, int priority, Converter<T> converter) {
-        MicroProfileTypedConverter<T> microProfileTypedConverter = new MicroProfileTypedConverter<T>(converter, priority);
-        return registerConverter(type, microProfileTypedConverter);
-    }
-
-    private <T> ConfigBuilder registerConverter(Type type, MicroProfileTypedConverter<T> microProfileTypedConverter) {
-        MicroProfileTypedConverter<?> existing = registeredConverters.get(type);
-        if (existing == null || microProfileTypedConverter.getPriority() > existing.getPriority()) {
-            registeredConverters.put(type, microProfileTypedConverter);
+        PrioritisedConverter oldPrioritisedConverter = prioritisedConverters.get(type);
+        if (oldPrioritisedConverter != null) {
+            if (oldPrioritisedConverter.priority == priority) {
+                throw new IllegalStateException("Found 2 converters with the same priority for type " + type
+                        + ". This will result in random behaviour -> aborting! Previous Converter: "
+                        + oldPrioritisedConverter.converter.getClass() + " 2nd Converter: " + converter.getClass());
+            }
+            if (oldPrioritisedConverter.priority > priority) {
+                return this;
+            }
         }
+
+        prioritisedConverters.put(type, new PrioritisedConverter(type, priority, converter));
+
         return this;
     }
 
@@ -150,8 +147,12 @@ public class DefaultConfigBuilder implements ConfigBuilder {
         ConfigImpl config = new ConfigImpl();
         config.addConfigSources(configSources);
 
-        for (Map.Entry<Type, MicroProfileTypedConverter<?>> entry : registeredConverters.entrySet()) {
-            config.addConverter(entry.getKey(), entry.getValue());
+        for (Converter<?> converter : converters) {
+            config.addConverter(converter);
+        }
+
+        for (PrioritisedConverter prioritisedConverter : prioritisedConverters.values()) {
+            config.addPrioritisedConverter(prioritisedConverter);
         }
 
         return config;
@@ -168,23 +169,6 @@ public class DefaultConfigBuilder implements ConfigBuilder {
         configSources.addAll(new PropertyFileConfigSourceProvider("META-INF/microprofile-config.properties", true, forClassLoader).getConfigSources(forClassLoader));
 
         return configSources;
-    }
-
-    private void registerDefaultConverters() {
-        registeredConverters.put(String.class, new MicroProfileTypedConverter<>(StringConverter.INSTANCE));
-        registeredConverters.put(Boolean.class, new MicroProfileTypedConverter<>(BooleanConverter.INSTANCE));
-        registeredConverters.put(boolean.class, new MicroProfileTypedConverter<>(BooleanConverter.INSTANCE));
-        registeredConverters.put(Double.class, new MicroProfileTypedConverter<>(DoubleConverter.INSTANCE));
-        registeredConverters.put(double.class, new MicroProfileTypedConverter<>(DoubleConverter.INSTANCE));
-        registeredConverters.put(Float.class, new MicroProfileTypedConverter<>(FloatConverter.INSTANCE));
-        registeredConverters.put(float.class, new MicroProfileTypedConverter<>(FloatConverter.INSTANCE));
-        registeredConverters.put(Integer.class, new MicroProfileTypedConverter<>(IntegerConverter.INSTANCE));
-        registeredConverters.put(int.class, new MicroProfileTypedConverter<>(IntegerConverter.INSTANCE));
-        registeredConverters.put(Long.class, new MicroProfileTypedConverter<>(LongConverter.INSTANCE));
-        registeredConverters.put(long.class, new MicroProfileTypedConverter<>(LongConverter.INSTANCE));
-
-        registeredConverters.put(URL.class, new MicroProfileTypedConverter<>(URLConverter.INSTANCE));
-        registeredConverters.put(Class.class, new MicroProfileTypedConverter<>(ClassConverter.INSTANCE));
     }
 
     private Type getTypeOfConverter(Class clazz) {
@@ -207,5 +191,29 @@ public class DefaultConfigBuilder implements ConfigBuilder {
         }
 
         return getTypeOfConverter(clazz.getSuperclass());
+    }
+
+    static class PrioritisedConverter {
+        private final Class<?> clazz;
+        private final int priority;
+        private final Converter converter;
+
+        public PrioritisedConverter(Class<?> clazz, int priority, Converter converter) {
+            this.clazz = clazz;
+            this.priority = priority;
+            this.converter = converter;
+        }
+
+        public Class<?> getType() {
+            return clazz;
+        }
+
+        public int getPriority() {
+            return priority;
+        }
+
+        public Converter getConverter() {
+            return converter;
+        }
     }
 }

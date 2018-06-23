@@ -23,6 +23,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author <a href="mailto:struberg@apache.org">Mark Struberg</a>
@@ -30,6 +32,8 @@ import java.util.Properties;
 @Typed
 @Vetoed
 public class PropertyFileConfigSource extends BaseConfigSource {
+    private static final Logger LOG = Logger.getLogger(PropertyFileConfigSource.class.getName());
+
     private Map<String, String> properties;
     private String fileName;
 
@@ -63,23 +67,12 @@ public class PropertyFileConfigSource extends BaseConfigSource {
     private Map<String, String> loadProperties(URL url) {
         Properties props = new Properties();
 
-        InputStream inputStream = null;
-        try {
-            inputStream = url.openStream();
+        try (InputStream inputStream = url.openStream()) {
 
-            if (inputStream != null) {
-                props.load(inputStream);
-            }
+            props.load(inputStream);
         } catch (IOException e) {
-            return null;
-        } finally {
-            try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException e) {
-                // no worries, means that the file is already closed
-            }
+            // don't return null on IOException
+            LOG.log(Level.WARNING, "Unable to read URL " + url, e);
         }
 
         return (Map) props;

@@ -68,7 +68,7 @@ public abstract class AbstractConfigSource implements ConfigSource {
                 // Ignored
             }
         }
-        return 100;
+        return DEFAULT_ORDINAL;
     }
 
 }
