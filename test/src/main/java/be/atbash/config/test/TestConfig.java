@@ -30,7 +30,7 @@ import java.util.NoSuchElementException;
 /**
  * {@link Config} implementation using a Map for unit test usages. Use {@link TestConfig#addConfigValue(String, String)} to specify some configuration parameters.
  * The default converts are specified with {@link TestConfig#registerDefaultConverters()} and additional ones can be defined using {@link TestConfig#registerConverter(Converter)}.
- *
+ * <p>
  * After the unit test has run, one should remove the configuration parameters with the method {@link TestConfig#resetConfig()}.
  */
 
@@ -42,7 +42,8 @@ public class TestConfig implements Config {
 
     /**
      * Add a configuration parameter value, which will be picked up a call to {@link Config#getValue(String, Class)}.
-     * @param key Parameter key value
+     *
+     * @param key   Parameter key value
      * @param value Configuration parameter value.
      */
     public static void addConfigValue(String key, String value) {
@@ -165,6 +166,9 @@ public class TestConfig implements Config {
 
     private <T> Converter getConverter(Class<T> asType) {
         Converter converter = converters.get(asType);
+        if (converter == null) {
+            converter = ImplicitConverter.getImplicitConverter(asType);
+        }
         if (converter == null) {
             throw new IllegalArgumentException("No Converter registered for class " + asType);
         }
