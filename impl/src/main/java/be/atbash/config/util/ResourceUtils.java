@@ -145,7 +145,14 @@ public final class ResourceUtils {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Opening resource from class path [{}]", path);
         }
-        return ClassUtils.getResourceAsStream(path);
+        InputStream result = ClassUtils.getResourceAsStream(path);
+        if (result == null) {
+            if (path.startsWith("/")) {
+                String newPath = path.substring(1);
+                result = loadFromClassPath(newPath);
+            }
+        }
+        return result;
     }
 
     private static String stripPrefix(String resourcePath) {
