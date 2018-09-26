@@ -55,6 +55,7 @@ public class TestConfig implements Config {
      */
     public static void resetConfig() {
         configValues.clear();
+        converters.clear();
     }
 
     /**

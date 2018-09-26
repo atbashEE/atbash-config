@@ -1,5 +1,5 @@
-/**
- * Copyright 2017 Rudy De Busscher
+/*
+ * Copyright 2017-2018 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package be.atbash.config.logging.testclasses
+package be.atbash.config.logging.testclasses;
 
-import be.atbash.config.logging.ConfigEntry
+import be.atbash.config.AbstractConfiguration;
+import be.atbash.config.logging.ConfigEntry;
+import be.atbash.config.logging.ModuleConfig;
 
-/**
- *
- */
-
-class ParentConfig {
+public class HierarchyConfig extends AbstractConfiguration implements ModuleConfig {
 
     @ConfigEntry
-    String defineParentValue() {
-        return "Parent Config Value"
+    public String defineStringConfigValue() {
+        return "Config Value";
     }
 
 }

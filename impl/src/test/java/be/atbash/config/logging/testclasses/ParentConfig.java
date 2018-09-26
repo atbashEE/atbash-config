@@ -1,5 +1,5 @@
-/**
- * Copyright 2017 Rudy De Busscher
+/*
+ * Copyright 2017-2018 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package be.atbash.config.logging.testclasses
+package be.atbash.config.logging.testclasses;
 
-import be.atbash.config.logging.ConfigEntry
-import be.atbash.config.logging.ModuleConfig
-import be.atbash.config.logging.ModuleConfigName
+import be.atbash.config.logging.ConfigEntry;
 
-/**
- *
- */
-@ModuleConfigName("configNameScenario2")
-class Child2Config extends ParentConfig implements ModuleConfig {
+public class ParentConfig {
 
     @ConfigEntry
-    String defineChild2Value() {
-        return "Child2 Config Value"
+    public String defineParentValue() {
+        return "Parent Config Value";
     }
-
 }
