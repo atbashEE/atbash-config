@@ -51,6 +51,15 @@ public class TestConfig implements Config {
     }
 
     /**
+     * Add configuration parameter values, which will be picked up a call to {@link Config#getValue(String, Class)}.
+     *
+     * @param values Configuration values to add.
+     */
+    public static void addConfigValues(Map<String, String> values) {
+        configValues.putAll(values);
+    }
+
+    /**
      * Reset all Configuration parameter values so that the tests keep on being independent.
      */
     public static void resetConfig() {
