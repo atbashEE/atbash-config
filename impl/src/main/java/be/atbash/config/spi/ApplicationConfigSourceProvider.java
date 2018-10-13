@@ -17,14 +17,15 @@ package be.atbash.config.spi;
 
 import be.atbash.config.source.AtbashConfigSource;
 import be.atbash.config.source.ConfigType;
-import be.atbash.config.util.ResourceUtils;
 import be.atbash.util.StringUtils;
+import be.atbash.util.resource.ResourceUtil;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.ConfigSourceProvider;
 
 import java.util.*;
 
-import static be.atbash.config.util.ResourceUtils.CLASSPATH_PREFIX;
+import static be.atbash.util.resource.ResourceUtil.CLASSPATH_PREFIX;
+
 
 /**
  *
@@ -57,7 +58,7 @@ public class ApplicationConfigSourceProvider implements ConfigSourceProvider {
             for (ConfigType configType : ConfigType.values()) {
 
                 String configLocation = CLASSPATH_PREFIX + configurationName + configType.getSuffix();
-                if (ResourceUtils.resourceExists(configLocation)) {
+                if (ResourceUtil.getInstance().resourceExists(configLocation)) {
                     result.add(new AtbashConfigSource(configType, configLocation, 150));
                 }
             }
@@ -67,7 +68,7 @@ public class ApplicationConfigSourceProvider implements ConfigSourceProvider {
                 for (ConfigType configType : ConfigType.values()) {
 
                     String configLocation = CLASSPATH_PREFIX + configurationName + "-" + stageValue + configType.getSuffix();
-                    if (ResourceUtils.resourceExists(configLocation)) {
+                    if (ResourceUtil.getInstance().resourceExists(configLocation)) {
                         result.add(new AtbashConfigSource(configType, configLocation, 200));
                     }
                 }
@@ -77,7 +78,7 @@ public class ApplicationConfigSourceProvider implements ConfigSourceProvider {
             String externalFile = System.getProperty("s");
             if (StringUtils.hasText(externalFile)) {
                 ConfigType configType = defineConfigType(externalFile);
-                if (ResourceUtils.resourceExists(externalFile)) {
+                if (ResourceUtil.getInstance().resourceExists(externalFile)) {
                     result.add(new AtbashConfigSource(configType, externalFile, 250));
                 }
             }

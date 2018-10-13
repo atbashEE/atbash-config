@@ -16,7 +16,7 @@
 package be.atbash.config.source;
 
 import be.atbash.config.spi.AbstractConfigSource;
-import be.atbash.config.util.ResourceUtils;
+import be.atbash.util.resource.ResourceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -45,7 +45,7 @@ public class AtbashConfigSource extends AbstractConfigSource {
         this.ordinal = ordinal;
         this.configLocation = configLocation;
         try {
-            InputStream inputStream = ResourceUtils.getInputStream(configLocation);
+            InputStream inputStream = ResourceUtil.getInstance().getStream(configLocation);
 
             switch (configType) {
 
