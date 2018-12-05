@@ -1,1 +1,2 @@
 be.atbash.config.spi.ApplicationConfigSourceProvider
+be.atbash.config.spi.AliasConfigSourceProvider

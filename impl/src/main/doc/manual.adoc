@@ -1,6 +1,6 @@
 = Atbash Configuration
 Rudy De Busscher <rdebusscher@gmail.com>
-v0.9.2, 04/08/2018
+v0.9.3, ??/??/2018
 :example-caption!:
 ifndef::imagesdir[:imagesdir: images]
 ifndef::sourcedir[:sourcedir: ../../main/java]
@@ -8,6 +8,10 @@ ifndef::sourcedir[:sourcedir: ../../main/java]
 User manual for Atbash configuration.
 
 == Release Notes
+
+=== 0.9.3
+
+. Support for _alternative_ configuration keys.
 
 === 0.9.2
 
@@ -354,6 +358,22 @@ Config implementation: be.atbash.config.examples.ee.configname.ParentConfig
    value:	Parent Config Value
 
 ----
+
+=== Alternative configuration keys (0.9.3)
+
+The support for alternative key values is introduced for supporting functionality to change configuration key values in a backwards compatible way.
+
+Suppose you have a configuration key `loginPage` but in the new version of your tool, you like to change this to `atbash.octopus.web.loginPage`. And you would like to support also the old configuration key for those developers who didn't update their configuration file yet.
+
+Within your code, you can already use the new configuration key, `atbash.octopus.web.loginPage` in our example, and define the mapping in a file like `config/alias-demo.properties`.
+
+    atbash.octopus.web.loginPage=loginPage
+
+The special ConfigSource created for this scenario comes always last in the list of all ConfigSources. It will check if the key is one of the defined keys for which an alternative is defined and tries to read the value for this alternative value.
+
+The alternative key names needs to be defined in a classpath file with name and location like `config/alias-<someName>.properties` where someName can be anything but should be unique (no multiple resources with the same name should be found)
+
+When the ConfigSource detects that a value for the `oldKey` is used, an INFO message is written to the log to inform the developers.
 
 === Advanced ClassConverter
 
