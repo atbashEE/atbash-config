@@ -65,12 +65,12 @@ public class AliasConfigSource implements ConfigSource {
 
     @Override
     public Map<String, String> getProperties() {
-        return null;
+        return new HashMap<>(); // There are no real properties kept here, just a mapping.
     }
 
     @Override
     public Set<String> getPropertyNames() {
-        return null;
+        return new HashSet<>(); // There are no real properties kept here, just a mapping.
     }
 
     @Override
