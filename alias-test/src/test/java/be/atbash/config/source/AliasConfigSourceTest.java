@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Rudy De Busscher
+ * Copyright 2017-2019 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package be.atbash.config.source;
 
-import be.atbash.util.resource.internal.ResourceWalker;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Rudy De Busscher
+ * Copyright 2017-2019 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import java.util.Properties;
 
 public class AtbashConfigSource extends AbstractConfigSource {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AtbashConfigSource.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AtbashConfigSource.class);
 
     private int ordinal;
     private String configLocation;
@@ -83,11 +83,15 @@ public class AtbashConfigSource extends AbstractConfigSource {
                     result.put(entry.getKey(), assembleStringList(listEntry));
                 }
                 // We can't support this type of properties constructs
-                LOG.warn(String.format("No support for List of type %s, found for key %s within YAML configuration file",
-                        listEntry.get(0).getClass().getName(), entry.getKey()));
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn(String.format("No support for List of type %s, found for key %s within YAML configuration file",
+                            listEntry.get(0).getClass().getName(), entry.getKey()));
+                }
             } else {
                 if (entry.getValue() == null) {
-                    LOG.warn(String.format("Empty value for parameter key %s", entry.getKey()));
+                    if (LOGGER.isWarnEnabled()) {
+                        LOGGER.warn(String.format("Empty value for parameter key %s", entry.getKey()));
+                    }
                 } else {
                     result.put(entry.getKey(), entry.getValue().toString());
                 }

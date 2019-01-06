@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Rudy De Busscher
+ * Copyright 2017-2019 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,7 +84,9 @@ public class AliasConfigSource implements ConfigSource {
 
             if (StringUtils.hasText(result)) {
                 if (!usedOldKeys.contains(oldName)) {
-                    logger.info(String.format("Found a configuration value for deprecated key '%s'. Please use the new key '%s'", oldName, propertyName));
+                    if (logger.isInfoEnabled()) {
+                        logger.info(String.format("Found a configuration value for deprecated key '%s'. Please use the new key '%s'", oldName, propertyName));
+                    }
                     usedOldKeys.add(oldName);
                 }
             }

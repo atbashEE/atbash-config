@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Rudy De Busscher
+ * Copyright 2017-2019 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,14 @@
  */
 package be.atbash.config;
 
+import be.atbash.config.logging.ModuleConfig;
 import be.atbash.util.PublicAPI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Can be used as parent class of Configuration classes (implementing {@link ModuleConfig}.
  */
 @PublicAPI
 public abstract class AbstractConfiguration {
-
-    // TODO Can be removed
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Reads the configuration property as an optional value, so it is not required to have a value for the key/propertyName, and

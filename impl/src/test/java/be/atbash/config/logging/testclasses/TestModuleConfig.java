@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Rudy De Busscher
+ * Copyright 2017-2019 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ public class TestModuleConfig implements ModuleConfig {
 
     @ConfigEntry
     public void needWarningInLogNoReturn() {
+        // Test method which doesn't need to do anything.
     }
 
     public String doNotLog() {
@@ -80,9 +81,7 @@ public class TestModuleConfig implements ModuleConfig {
     static class MyConfigObject {
         @Override
         public String toString() {
-            final StringBuilder sb = new StringBuilder("MyConfigObject{");
-            sb.append('}');
-            return sb.toString();
+            return "MyConfigObject{}";
         }
     }
 }

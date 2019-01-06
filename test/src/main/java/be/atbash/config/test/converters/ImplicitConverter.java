@@ -30,12 +30,12 @@ import java.util.List;
  */
 public abstract class ImplicitConverter {
 
+    private ImplicitConverter() {
+    }
+
     public static Converter getImplicitConverter(Class<?> clazz) {
         // handle ct with String param
-        Converter converter = null;
-        if (converter == null) {
-            converter = hasConverterMethod(clazz, "of", String.class);
-        }
+        Converter converter = hasConverterMethod(clazz, "of", String.class);
         if (converter == null) {
             converter = hasConverterMethod(clazz, "of", CharSequence.class);
         }

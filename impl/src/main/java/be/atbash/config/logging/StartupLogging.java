@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Rudy De Busscher
+ * Copyright 2017-2019 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import java.util.List;
 public class StartupLogging {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StartupLogging.class);
+    private static final String VALUE_OUTPUT = "   value:\t";
 
     private String separator = System.getProperty("line.separator");
 
@@ -65,7 +66,9 @@ public class StartupLogging {
         for (ModuleConfig config : moduleConfigs) {
             configInfo.append(getConfigInfo(config));
         }
-        LOGGER.info(configInfo.toString());
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info(configInfo.toString());
+        }
     }
 
     private void checkLoggingParameters() {
@@ -167,21 +170,21 @@ public class StartupLogging {
     private void addConfigEntryValue(ModuleConfig config, StringBuilder info, Method currentMethod) {
         ConfigEntry configEntry = currentMethod.getAnnotation(ConfigEntry.class);
         if (!Void.class.equals(configEntry.classResult())) {
-            info.append("   value:\t").append(configEntry.classResult().getCanonicalName());
+            info.append(VALUE_OUTPUT).append(configEntry.classResult().getCanonicalName());
         } else {
-            if (configEntry.value() != null && configEntry.value().length > 0) {
+            if (configEntry.value().length > 0) {
 
-                info.append("   value:\t").append(Arrays.toString(configEntry.value()));
+                info.append(VALUE_OUTPUT).append(Arrays.toString(configEntry.value()));
             } else {
                 if (currentMethod.getParameterTypes().length == 0) {
                     if (void.class.equals(currentMethod.getReturnType())) {
-                        info.append("   value:\tunknown - Method has no return value");
+                        info.append(VALUE_OUTPUT).append("unknown - Method has no return value");
                     } else {
 
                         executeMethodForConfigRetrieval(config, info, currentMethod, configEntry.noLogging());
                     }
                 } else {
-                    info.append("   value:\tunknown - Method has a parameter");
+                    info.append(VALUE_OUTPUT).append("unknown - Method has a parameter");
                 }
             }
         }
@@ -193,9 +196,9 @@ public class StartupLogging {
         try {
             value = currentMethod.invoke(config);
             if (noLogging && !allLoggingActivated) {
-                info.append("   value:\t").append("No logging parameter active ").append(value == null ? "null" : "[non null value]");
+                info.append(VALUE_OUTPUT).append("No logging parameter active ").append(value == null ? "null" : "[non null value]");
             } else {
-                info.append("   value:\t");
+                info.append(VALUE_OUTPUT);
                 if (value == null) {
                     info.append("null");
                 } else {
@@ -205,7 +208,7 @@ public class StartupLogging {
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
             // Exception converted in business logic here.
-            info.append("   value:\t[unknown]");
+            info.append(VALUE_OUTPUT).append("[unknown]");
         }
     }
 
