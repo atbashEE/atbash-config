@@ -6,15 +6,16 @@
 
     <groupId>be.atbash.config</groupId>
     <artifactId>config-parent</artifactId>
-    <version>0.9.3</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
 
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
 
-        <atbash-utils.version>0.9.3</atbash-utils.version>
+        <atbash-utils.version>1.0.0-SNAPSHOT</atbash-utils.version>
+        <microprofile-config.version>1.3</microprofile-config.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -73,8 +74,6 @@
     </dependencyManagement>
 
     <modules>
-        <module>api</module>
-        <module>geronimo-config</module>
         <module>test</module>
         <module>impl</module>
         <module>alias-test</module>

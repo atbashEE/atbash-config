@@ -24,13 +24,13 @@
     <parent>
         <groupId>be.atbash.config</groupId>
         <artifactId>config-examples</artifactId>
-        <version>0.9.3</version>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>be.atbash.config.examples</groupId>
     <artifactId>examples-se</artifactId>
-    <version>0.9.3</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Atbash configuration examples for Java SE</name>
@@ -58,10 +58,17 @@
         </dependency>
 
         <dependency>
-            <groupId>be.atbash.config</groupId>
-            <artifactId>geronimo-config</artifactId>
-            <version>${project.parent.version}</version>
+            <groupId>org.eclipse.microprofile.config</groupId>
+            <artifactId>microprofile-config-api</artifactId>
+            <version>${microprofile-config.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.geronimo.config</groupId>
+            <artifactId>geronimo-config-impl</artifactId>
+            <version>1.2.2</version>
             <scope>runtime</scope>
+
         </dependency>
     </dependencies>
     <build>

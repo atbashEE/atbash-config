@@ -24,12 +24,12 @@
     <parent>
         <groupId>be.atbash.config</groupId>
         <artifactId>config-parent</artifactId>
-        <version>0.9.3</version>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>atbash-alias-config-test</artifactId>
-    <version>0.9.3</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Atbash alias Configuration test</name>
@@ -52,9 +52,9 @@
         </dependency>
 
         <dependency>
-            <groupId>be.atbash.config</groupId>
-            <artifactId>geronimo-config</artifactId>
-            <version>${project.parent.version}</version>
+            <groupId>org.apache.geronimo.config</groupId>
+            <artifactId>geronimo-config-impl</artifactId>
+            <version>1.2.2</version>
             <scope>runtime</scope>
         </dependency>
 

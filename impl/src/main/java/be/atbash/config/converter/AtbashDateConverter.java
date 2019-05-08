@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Rudy De Busscher
+ * Copyright 2017-2019 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package be.atbash.config.converter;
 
-import be.atbash.config.ConfigOptionalValue;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.spi.Converter;
 
 import javax.enterprise.inject.Vetoed;
@@ -61,7 +61,7 @@ public class AtbashDateConverter implements Converter<Date> {
 
         initialized = true;
 
-        datePattern = ConfigOptionalValue.getValue("atbash.date.pattern", String.class);
+        datePattern = ConfigProvider.getConfig().getOptionalValue("atbash.date.pattern", String.class).orElse(null);
         if (datePattern == null) {
             datePattern = DEFAULT_PATTERN;
         }

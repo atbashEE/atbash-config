@@ -9,4 +9,4 @@ mvn clean install
 
 
 
-mvn versions:set -DnewVersion=0.9.3 -DgenerateBackupPoms=false
+mvn versions:set -DnewVersion=1.0.0-SNAPSHOT -DgenerateBackupPoms=false

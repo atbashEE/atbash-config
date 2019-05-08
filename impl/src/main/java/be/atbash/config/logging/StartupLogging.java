@@ -15,8 +15,8 @@
  */
 package be.atbash.config.logging;
 
-import be.atbash.config.ConfigOptionalValue;
 import be.atbash.util.ProxyUtils;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +75,7 @@ public class StartupLogging {
         String logAllProperty = System.getProperty("atbash.config.log.all");
         allLoggingActivated = "true".equalsIgnoreCase(logAllProperty);
 
-        Boolean disabledLogging = ConfigOptionalValue.getValue("atbash.config.log.disabled", Boolean.class);
+        Boolean disabledLogging = ConfigProvider.getConfig().getOptionalValue("atbash.config.log.disabled", Boolean.class).orElse(null);
         loggingDisabled = disabledLogging == null ? false : disabledLogging;
     }
 

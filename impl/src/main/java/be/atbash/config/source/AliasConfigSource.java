@@ -15,11 +15,11 @@
  */
 package be.atbash.config.source;
 
-import be.atbash.config.ConfigOptionalValue;
 import be.atbash.util.StringUtils;
 import be.atbash.util.exception.AtbashUnexpectedException;
 import be.atbash.util.resource.ResourceScanner;
 import be.atbash.util.resource.ResourceUtil;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +80,7 @@ public class AliasConfigSource implements ConfigSource {
             // getOptionalValue so that we doin't get an Exception with old key doesn't exists.
             String oldName = keyMapping.get(propertyName);
 
-            result = ConfigOptionalValue.getValue(oldName, String.class);
+            result = ConfigProvider.getConfig().getOptionalValue(oldName, String.class).orElse(null);
 
             if (StringUtils.hasText(result)) {
                 if (!usedOldKeys.contains(oldName)) {

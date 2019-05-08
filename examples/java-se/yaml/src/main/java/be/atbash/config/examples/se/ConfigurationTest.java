@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Rudy De Busscher
+ * Copyright 2017-2019 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package be.atbash.config.examples.se;
+
 
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;

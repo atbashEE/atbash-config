@@ -17,6 +17,7 @@ package be.atbash.config;
 
 import be.atbash.config.logging.ModuleConfig;
 import be.atbash.util.PublicAPI;
+import org.eclipse.microprofile.config.ConfigProvider;
 
 /**
  * Can be used as parent class of Configuration classes (implementing {@link ModuleConfig}.
@@ -35,7 +36,7 @@ public abstract class AbstractConfiguration {
      */
     protected <T> T getOptionalValue(String propertyName, T defaultValue, Class<T> propertyType) {
 
-        T result = ConfigOptionalValue.getValue(propertyName, propertyType);
+        T result = ConfigProvider.getConfig().getOptionalValue(propertyName, propertyType).orElse(null);
         if (result == null) {
             result = defaultValue;
         }

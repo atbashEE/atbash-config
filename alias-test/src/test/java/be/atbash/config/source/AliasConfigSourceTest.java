@@ -25,6 +25,8 @@ import uk.org.lidalia.slf4jtest.LoggingEvent;
 import uk.org.lidalia.slf4jtest.TestLogger;
 import uk.org.lidalia.slf4jtest.TestLoggerFactory;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AliasConfigSourceTest {
@@ -75,7 +77,7 @@ public class AliasConfigSourceTest {
     @Test
     public void testOptional() {
         Config config = ConfigProvider.getConfig();
-        String value = config.getOptionalValue("opt1", String.class);
-        assertThat(value).isNull();
+        Optional<String> value = config.getOptionalValue("opt1", String.class);
+        assertThat(value.isPresent()).isFalse();
     }
 }

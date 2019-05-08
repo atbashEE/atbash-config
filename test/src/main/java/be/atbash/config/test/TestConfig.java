@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Rudy De Busscher
+ * Copyright 2017-2019 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,7 @@ import org.eclipse.microprofile.config.spi.Converter;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * {@link Config} implementation using a Map for unit test usages. Use {@link TestConfig#addConfigValue(String, String)} to specify some configuration parameters.
@@ -147,12 +144,12 @@ public class TestConfig implements Config {
     }
 
     @Override
-    public <T> T getOptionalValue(String propertyName, Class<T> propertyType) {
+    public <T> Optional<T> getOptionalValue(String propertyName, Class<T> propertyType) {
         String value = configValues.get(propertyName);
         if (value == null) {
-            return null;
+            return Optional.empty();
         }
-        return getValue(propertyName, propertyType);
+        return Optional.of(getValue(propertyName, propertyType));
     }
 
     @Override
