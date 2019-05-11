@@ -66,14 +66,11 @@ public abstract class ImplicitConverter {
             if (!declaredConstructor.isAccessible()) {
                 declaredConstructor.setAccessible(true);
             }
-            return new Converter() {
-                @Override
-                public Object convert(String value) {
-                    try {
-                        return declaredConstructor.newInstance(value);
-                    } catch (Exception e) {
-                        throw new IllegalArgumentException(e);
-                    }
+            return value -> {
+                try {
+                    return declaredConstructor.newInstance(value);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException(e);
                 }
             };
         } catch (NoSuchMethodException e) {
@@ -90,15 +87,12 @@ public abstract class ImplicitConverter {
                 method.setAccessible(true);
             }
             if (Modifier.isStatic(method.getModifiers()) && method.getReturnType().equals(clazz)) {
-                return new Converter() {
-                    @Override
-                    public Object convert(String value) {
-                        try {
-                            return method.invoke(null, value);
-                        } catch (Exception e) {
-                            throw new IllegalArgumentException("Error while converting the value " + value +
-                                    " to type " + method.getReturnType());
-                        }
+                return value -> {
+                    try {
+                        return method.invoke(null, value);
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException("Error while converting the value " + value +
+                                " to type " + method.getReturnType());
                     }
                 };
             }
