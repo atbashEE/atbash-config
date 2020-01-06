@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Rudy De Busscher
+ * Copyright 2017-2020 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,26 @@
 package be.atbash.config.converter;
 
 import be.atbash.config.test.TestConfig;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+;
+
 public class AtbashDateConverterTest {
 
     private AtbashDateConverter converter;
 
-    @Before
+    @BeforeEach
     public void setup() {
         converter = new AtbashDateConverter();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         TestConfig.resetConfig();
     }

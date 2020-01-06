@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Rudy De Busscher
+ * Copyright 2017-2020 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ import be.atbash.config.logging.testclasses.Child1Config;
 import be.atbash.config.logging.testclasses.Child2Config;
 import be.atbash.config.logging.testclasses.Child3Config;
 import be.atbash.util.TestReflectionUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,7 +30,7 @@ public class ModuleConfigNameTest {
 
     private StartupLogging logging;
 
-    @Before
+    @BeforeEach
     public void setup() throws IllegalAccessException {
         valueHelper = new DynamicConfigValueHelper();
         logging = new StartupLogging();

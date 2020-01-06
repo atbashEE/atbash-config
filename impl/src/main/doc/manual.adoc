@@ -1,6 +1,6 @@
 = Atbash Configuration
 Rudy De Busscher <rdebusscher@gmail.com>
-v0.9.3, 09/01/2019
+v1.0.0, ??/??/2019
 :example-caption!:
 ifndef::imagesdir[:imagesdir: images]
 ifndef::sourcedir[:sourcedir: ../../main/java]
@@ -8,6 +8,16 @@ ifndef::sourcedir[:sourcedir: ../../main/java]
 User manual for Atbash configuration.
 
 == Release Notes
+
+=== 1.0.0
+
+. Compiled for and requires Java 8.
+. Dropped Java 7 port of MicroProfile API and Geronimo Configuration Implementation.
+. Updated to Java EE 8 versions
+
+. Using JUnit 5 for testing
+
+Remark: If you need a Java 7 compatible version please use version 0.9.3.
 
 === 0.9.3
 
@@ -50,7 +60,6 @@ MicroProfile (MP) has done a great job in standardizing the configuration for ap
 
 However, there are a few improvements which I need for my applications and let me create Atbash configuration:
 
-- Should also run on Java 7.
 - Configuration for multiple _stages_ within the artifact.
 - Logging of configuration entries belonging to a _module_.
 - Flexible date format support
@@ -58,44 +67,13 @@ However, there are a few improvements which I need for my applications and let m
 
 Atbash Config is compliant with MP Config and can be used in Java SE and Java EE (only dependency on CDI) environments.
 
-== Ported to Java 7
-
-MicroProfile is targeted to Java 8. So the Config API (the specification) and any implementations, like the general usable _Geronimo config_, are using features of Java 8.
-
-So I took the code from the following repositories
-
-- MicroProfile-config API: https://github.com/eclipse/microprofile-config/tree/master/api
-- Apache Geronimo configuration: https://github.com/apache/geronimo-config/tree/trunk/impl
-
-And updated the code to be compliant with Java 7.
-
-The only feature which is removed is the mapping between optional configuration values and the Java 8 Optional class.
-
-I kept the original packages and class names but placed them under a different Maven artifact name. That way, upgrading to Java 8 and the _real_ implementations should be very smooth and require no changes whatsoever.
-
 == Getting started
-
-=== MP Configuration running on Java 7
-
-If you just want to run an implementation of MP configuration on Java 7 (without the Atbash extensions), you can add the following dependency to your application.
-
-[source,xml]
-.Plain MP Config for Java 7
-----
-    <dependency>
-        <groupId>be.atbash.config</groupId>
-        <artifactId>geronimo-config</artifactId>
-        <version>${atbash.config.version}</version>
-    </dependency>
-----
-
-For the list of features and how to use them, I refer to the MicroProfile configuration documentation and examples.
 
 === Atbash configuration extension
 
 By adding the Atbash configuration Maven artifact, you add some additional features as described in the _introduction_ section.
 
-This artifact can be used in combination with the Java 7 ported code but also works with any other MP Config 1.1 compliant implementation.
+This artifact can be used with any MP Config 1.1 compliant implementation.
 
 [source,xml]
 .Atbash extension
@@ -109,56 +87,12 @@ This artifact can be used in combination with the Java 7 ported code but also wo
 
 The list of features is described in the _Atbash configuration features_ section.
 
-When using The Atbash configuration extension with a 'real' implementation, it is advised to exclude the _be.atbash.config:microprofile-config-api_ since these classes are already present (through the dependency on the MP API from the 'real' configuration implementation)
-
-[source,xml]
-.Atbash extension with 'real' configuration implementation
-----
-    <dependency>
-        <groupId>be.atbash.config</groupId>
-        <artifactId>atbash-config</artifactId>
-        <version>${atbash.config.version}</version>
-        <exclusions>
-            <exclusion>
-                <groupId>be.atbash.config</groupId>
-                <artifactId>microprofile-config-api</artifactId>
-            </exclusion>
-        </exclusions>
-    </dependency>
-----
-
-=== Known issues
-
-* Optional config value and a 'real' MP Config implementation
-
-When you are running WildFly Swarm or Payara Micro for example, a Java 8 implementation of the MicroProfile Config is executed.
-Whenever you retrieve an optional value (with _Config.getOptionalValue_ ofr example) you see an exception that the Optional<T> isn't compatible with the defined class.
-
-This is because the Atbash config has changed the _Optional<T>_ return value to _<T>_ and returning null when the config parameter isn't defined.
-
-This is solved by using some reflection tricks when you use one of the following calls.
-
-----
-ConfigOptionalValue.getValue(String, Class<T>)
-----
-
-or when using the _be.atbash.config.AbstractConfiguration_
-
-----
-getOptionalValue(String, Class<T>)
-or
-getOptionalValue(String, T, Class<T>)
-----
-
-Where T is the default value when config parameter is not specified.
-
-This allows your framework or library, created with Java 7 and Atbash Config, to run on a MicroProfile compatible implementation.
 
 == Atbash configuration features
 
 === Define the file containing the properties
 
-In the MicroProfile Configuration, the file name which contains the configuration values is fixed and defined as **META-INF/microprofile-config.properties**.
+In the MicroProfile Configuration specification, the file name which contains the configuration values is fixed and defined as **META-INF/microprofile-config.properties**.
 
 However, Atbash configuration should also be available within applications which aren't categorized as micro-services, but general Java EE application (perhaps a Web application using JSF framework)
 
@@ -209,10 +143,10 @@ In fact, Atbash adds 3 levels to the __ConfigSource__s defined with the Configur
 |Priority |ConfigSource
 
 |400
-|JVM System properties based ConfigSource (From geronimo Config)
+|JVM System properties based ConfigSource (From MP Config)
 
 |300
-|System environment properties based ConfigSource (From geronimo Config)
+|System environment properties based ConfigSource (From MP Config)
 
 |250
 |Configuration file(see remark) to overrule application property, specified by -Ds JVM System Property.
@@ -224,7 +158,7 @@ In fact, Atbash adds 3 levels to the __ConfigSource__s defined with the Configur
 |_'Default'_ configuration file for application defined by _base_ name.
 
 |100
-|microprofile-config.properties file based ConfigSource (From geronimo Config)
+|microprofile-config.properties file based ConfigSource (From MP Config)
 |===
 
 Remark: There are 3 prefixes supported to specify the location type of the configuration file, **classpath:**, **file:** and **url:**.
@@ -379,7 +313,7 @@ When the ConfigSource detects that a value for the `oldKey` is used, an INFO mes
 
 === Advanced ClassConverter
 
-Atbash Configuration Extension (artifact atbash-config) Class converter uses the advanced Class loading features of Atbash SE.
+Atbash Configuration Class converter uses the advanced Class loading features of Atbash SE.
 
 So the following example
 
@@ -406,7 +340,7 @@ will search for the Fully Qualified Class name with
 The config value can contain sensitive information so it is not always desirable to have this value in the log.  By specifying the member _noLogging_ one can indicate that the configuration value will not be logged, only if it value is specified (non null) or not.
 
 [source,java]
-.Not logging sensitentive information
+.Not logging sensitive information
 ----
 @ConfigEntry(nologging = true)
 public String getSecretValue() {return "secret";}
@@ -419,7 +353,7 @@ The above configuration parameter will then be shown as follow in the log file.
    value:	No logging parameter active [non null value]
 ----
 
-You can overrule this hiding of configuration value by defining the JWM system value **atbash.config.log.all** (like in -Datbash.config.log.all=true) and the value will be shown in the log.
+You can overrule this hiding of configuration value by defining the JVM system value **atbash.config.log.all** (like in -Datbash.config.log.all=true) and the value will be shown in the log.
 
 ==== @ConfigEntry(value)
 
@@ -444,7 +378,7 @@ TODO
 
 === Flexible Date format
 
-Now that the code is ported to Java 7, the converters for the _DateTime_ and equivalent are removed. A general one for **Date.class** is added, but the default format is Locale dependent.
+The converters for the **Date.class** use a default format, but the default format is Locale dependent.
 
 This means that when the application runs on multiple servers where, for whichever reason, the Locale information of the OS is not identical, the parsing of the dates can fail.
 
@@ -509,7 +443,7 @@ All CDI beans implementing the _ModuleConfig_ marker interface containing method
 
 This is not possible in Java SE (unless using CDI 2.0) but the developer can decide to manually log the configuration values.
 
-The class must only implement the marker interface and with the following command the values are logged.
+The class must only implement the marker _ModuleConfig_ interface and with the following command the values are logged.
 
 [source,java]
 ----
@@ -582,9 +516,4 @@ No blocking issues except you created a custom ConfigBuilder or custom ConfigSou
 - ConfigBuilder interface has new method withConverter()
 - ConfigSource interface has additional method getPropertyNames().
 
-== Roadmap before 1.0
-
-- More tests
-- Prefix-based configuration keys
-- Various small improvements
 

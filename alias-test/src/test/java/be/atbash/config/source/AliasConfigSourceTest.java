@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Rudy De Busscher
+ * Copyright 2017-2020 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ package be.atbash.config.source;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import uk.org.lidalia.slf4jtest.LoggingEvent;
 import uk.org.lidalia.slf4jtest.TestLogger;
 import uk.org.lidalia.slf4jtest.TestLoggerFactory;
@@ -33,12 +33,12 @@ public class AliasConfigSourceTest {
 
     private TestLogger logger;
 
-    @Before
+    @BeforeEach
     public void setup() {
         logger = TestLoggerFactory.getTestLogger(AliasConfigSource.class);
     }
 
-    @After
+    @AfterEach
     public void reset() {
         TestLoggerFactory.clear();
     }
