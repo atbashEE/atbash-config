@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Rudy De Busscher
+ * Copyright 2017-2020 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ import be.atbash.config.examples.ee.testclasses.ConvTestTypeWStringValueOf;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.util.List;
 
 /**
