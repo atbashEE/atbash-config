@@ -81,7 +81,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.19</version>
+            <version>1.26</version>
             <optional>true
             </optional>  <!-- TODO Otherwise it gives issues with Swarm since it access the Logger before Swarm does when using WebTester-->
             <!-- And first impression is that Swarm already has snakeyaml. To be investigated -->
