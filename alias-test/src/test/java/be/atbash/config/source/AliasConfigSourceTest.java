@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Rudy De Busscher
+ * Copyright 2017-2022 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,32 +15,30 @@
  */
 package be.atbash.config.source;
 
-import com.google.common.collect.ImmutableList;
+import be.atbash.runtime.logging.testing.LoggingEvent;
+import be.atbash.runtime.logging.testing.TestLogMessages;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.org.lidalia.slf4jtest.LoggingEvent;
-import uk.org.lidalia.slf4jtest.TestLogger;
-import uk.org.lidalia.slf4jtest.TestLoggerFactory;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AliasConfigSourceTest {
 
-    private TestLogger logger;
-
     @BeforeEach
     public void setup() {
-        logger = TestLoggerFactory.getTestLogger(AliasConfigSource.class);
+        TestLogMessages.init();
     }
 
     @AfterEach
     public void reset() {
-        TestLoggerFactory.clear();
+        TestLogMessages.reset();
     }
 
     @Test
@@ -50,10 +48,12 @@ public class AliasConfigSourceTest {
         String value = config.getValue("key", String.class);
         assertThat(value).isEqualTo("value");
 
-        ImmutableList<LoggingEvent> loggingEvents = logger.getAllLoggingEvents();
-        assertThat(loggingEvents).hasSize(1);
-        assertThat(loggingEvents.asList().get(0).getMessage()).isEqualTo("Found a configuration value for deprecated key 'oldKey'. Please use the new key 'key'");
-        assertThat(loggingEvents.asList().get(0).getLevel().name()).isEqualTo("INFO");
+        List<LoggingEvent> loggingEvents = TestLogMessages.getLoggingEvents();
+        // depending if we run this test standalone or as part of this class, the number of messages
+        // can be different. We just need the last message.
+        int logMessages = loggingEvents.size();
+        assertThat(loggingEvents.get(logMessages - 1).getMessage()).isEqualTo("Found a configuration value for deprecated key 'oldKey'. Please use the new key 'key'");
+        assertThat(loggingEvents.get(logMessages - 1).getLevel()).isEqualTo(Level.INFO);
     }
 
     @Test

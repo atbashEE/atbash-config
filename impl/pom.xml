@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2017-2020 Rudy De Busscher
+    Copyright 2017-2022 Rudy De Busscher
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -115,9 +115,9 @@
 
         <!-- Testing -->
         <dependency>
-            <groupId>be.atbash.config</groupId>
+            <groupId>be.atbash.jakarta.config</groupId>
             <artifactId>atbash-config-test</artifactId>
-            <version>${atbash-config-test.version}</version>
+            <version>${project.parent.version}</version>
             <scope>test</scope>
         </dependency>
 

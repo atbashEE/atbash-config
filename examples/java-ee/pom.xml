@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2017-2020 Rudy De Busscher
+    Copyright 2017-2022 Rudy De Busscher
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@
 
 
         <dependency>
-            <groupId>be.atbash.config</groupId>
+            <groupId>be.atbash.jakarta.config</groupId>
             <artifactId>atbash-config</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
@@ -96,12 +96,12 @@
             <id>plainJavaEE</id>
             <dependencies>
                 <dependency>
-                    <groupId>org.apache.geronimo.config</groupId>
-                    <artifactId>geronimo-config-impl</artifactId>
-                    <version>1.2.2</version>
-                    <classifier>jakarta</classifier>
+                    <groupId>be.atbash.runtime</groupId>
+                    <artifactId>mp-config</artifactId>
+                    <version>${atbash-runtime.version}</version>
                     <scope>runtime</scope>
                 </dependency>
+
             </dependencies>
         </profile>
     </profiles>

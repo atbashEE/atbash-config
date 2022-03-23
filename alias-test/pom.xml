@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2017-2020 Rudy De Busscher
+    Copyright 2017-2022 Rudy De Busscher
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -46,16 +46,22 @@
     <dependencies>
 
         <dependency>
-            <groupId>be.atbash.config</groupId>
+            <groupId>be.atbash.jakarta.config</groupId>
             <artifactId>atbash-config</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.geronimo.config</groupId>
-            <artifactId>geronimo-config-impl</artifactId>
-            <version>1.2.2</version>
-            <classifier>jakarta</classifier>
+            <groupId>org.eclipse.microprofile.config</groupId>
+            <artifactId>microprofile-config-api</artifactId>
+            <version>${microprofile-config.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>be.atbash.runtime</groupId>
+            <artifactId>mp-config</artifactId>
+            <version>${atbash-runtime.version}</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -82,16 +88,10 @@
         </dependency>
 
         <dependency>
-            <groupId>uk.org.lidalia</groupId>
-            <artifactId>slf4j-test</artifactId>
-            <version>1.2.0</version>
+            <groupId>be.atbash.runtime</groupId>
+            <artifactId>logging-testing</artifactId>
+            <version>${atbash-runtime.version}</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
     </dependencies>
