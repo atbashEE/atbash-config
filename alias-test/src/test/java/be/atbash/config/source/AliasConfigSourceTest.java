@@ -29,7 +29,7 @@ import java.util.logging.Level;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AliasConfigSourceTest {
+class AliasConfigSourceTest {
 
     @BeforeEach
     public void setup() {
@@ -42,7 +42,7 @@ public class AliasConfigSourceTest {
     }
 
     @Test
-    public void testKeyReplaced() {
+    void testKeyReplaced() {
         // 'key' is the new key, and only value defined for 'oldKey'
         Config config = ConfigProvider.getConfig();
         String value = config.getValue("key", String.class);
@@ -57,7 +57,7 @@ public class AliasConfigSourceTest {
     }
 
     @Test
-    public void testPrecedence1() {
+    void testPrecedence1() {
         // 'key1' is the new key, 'key2' the old.
         // There is a mapping from old to new, but new value is found
         Config config = ConfigProvider.getConfig();
@@ -66,7 +66,7 @@ public class AliasConfigSourceTest {
     }
 
     @Test
-    public void testPrecedence2() {
+    void testPrecedence2() {
         // 'key1' is the new key, 'key2' the old.
         // There is a mapping from old to new, but old value still can be looked up
         Config config = ConfigProvider.getConfig();
@@ -75,9 +75,9 @@ public class AliasConfigSourceTest {
     }
 
     @Test
-    public void testOptional() {
+    void testOptional() {
         Config config = ConfigProvider.getConfig();
         Optional<String> value = config.getOptionalValue("opt1", String.class);
-        assertThat(value.isPresent()).isFalse();
+        assertThat(value).isEmpty();
     }
 }

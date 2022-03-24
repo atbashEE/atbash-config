@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Rudy De Busscher
+ * Copyright 2017-2022 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ModuleConfigNameTest {
+class ModuleConfigNameTest {
 
     private DynamicConfigValueHelper valueHelper;
 
@@ -39,7 +39,7 @@ public class ModuleConfigNameTest {
     }
 
     @Test
-    public void moduleConfigName_Scenario1() {
+    void moduleConfigName_Scenario1() {
         // No @ModuleConfigName
         String info = logging.getConfigInfo(new Child1Config());
         String data = info.replaceAll("\\s", "");
@@ -48,7 +48,7 @@ public class ModuleConfigNameTest {
     }
 
     @Test
-    public void moduleConfigName_Scenario2() {
+    void moduleConfigName_Scenario2() {
         // @ModuleConfigName, no className
         String info = logging.getConfigInfo(new Child2Config());
         String data = info.replaceAll("\\s", "");
@@ -57,7 +57,7 @@ public class ModuleConfigNameTest {
     }
 
     @Test
-    public void moduleConfigName_Scenario3() {
+    void moduleConfigName_Scenario3() {
         // @ModuleConfigName, with className
         String info = logging.getConfigInfo(new Child3Config());
         String data = info.replaceAll("\\s", "");

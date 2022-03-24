@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Rudy De Busscher
+ * Copyright 2017-2022 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AbstractConfigurationTest {
+class AbstractConfigurationTest {
 
     private AbstractConfiguration config = new AbstractConfiguration() {
     };
@@ -32,7 +32,7 @@ public class AbstractConfigurationTest {
     }
 
     @Test
-    public void getOptionalValue() {
+    void getOptionalValue() {
         TestConfig.registerDefaultConverters();
         TestConfig.addConfigValue("someConfig", "configValue");
 

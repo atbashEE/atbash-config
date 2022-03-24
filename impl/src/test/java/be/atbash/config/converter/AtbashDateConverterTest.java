@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Rudy De Busscher
+ * Copyright 2017-2022 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,7 @@ import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-;
-
-public class AtbashDateConverterTest {
+class AtbashDateConverterTest {
 
     private AtbashDateConverter converter;
 
@@ -41,21 +39,21 @@ public class AtbashDateConverterTest {
     }
 
     @Test
-    public void convert_defaultFormat() {
+    void convert_defaultFormat() {
         Date result = converter.convert("2017-11-15");
 
         assertThat(result).withDateFormat("dd-MM-yyyy").isEqualTo("15-11-2017");
     }
 
     @Test
-    public void convert_inlineFormat() {
+    void convert_inlineFormat() {
         Date result = converter.convert("11-2017-15,MM-yyyy-dd");
 
         assertThat(result).withDateFormat("dd-MM-yyyy").isEqualTo("15-11-2017");
     }
 
     @Test
-    public void convert_configBasedFormat() {
+    void convert_configBasedFormat() {
 
         TestConfig.registerDefaultConverters();
         TestConfig.addConfigValue("atbash.date.pattern", "dd-yyyy-MM");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Rudy De Busscher
+ * Copyright 2017-2022 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,45 +19,44 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DynamicConfigValueHelperTest {
+class DynamicConfigValueHelperTest {
 
     private DynamicConfigValueHelper dynamicConfigValueHelper = new DynamicConfigValueHelper();
 
     @Test
-    public void getTruncatedConfigValue_stdCase() {
+    void getTruncatedConfigValue_stdCase() {
         assertThat(dynamicConfigValueHelper.getTruncatedConfigValue("{5}12345678")).isEqualTo("12345");
     }
 
     @Test
-    public void getTruncatedConfigValue_LongerThenLenght() {
+    void getTruncatedConfigValue_LongerThenLenght() {
         assertThat(dynamicConfigValueHelper.getTruncatedConfigValue("{7}1234")).isEqualTo("1234");
     }
 
     @Test
-    public void getTruncatedConfigValue_NoTruncationInfo() {
+    void getTruncatedConfigValue_NoTruncationInfo() {
         assertThat(dynamicConfigValueHelper.getTruncatedConfigValue("123456")).isEqualTo("123456");
     }
 
     @Test
-    public void getTruncatedConfigValue_CompleteTruncation() {
+    void getTruncatedConfigValue_CompleteTruncation() {
         assertThat(dynamicConfigValueHelper.getTruncatedConfigValue("{0}123456")).isEqualTo("[Dynamic value]");
     }
 
     @Test
-    public void getCompleteConfigValue_LongerThenLenght() {
+    void getCompleteConfigValue_LongerThenLenght() {
         assertThat(dynamicConfigValueHelper.getCompleteConfigValue("{7}1234")).isEqualTo("1234");
     }
 
     @Test
-    public void getCompleteConfigValue_NoTruncationInfo() {
+    void getCompleteConfigValue_NoTruncationInfo() {
         assertThat(dynamicConfigValueHelper.getCompleteConfigValue("123")).isEqualTo("123");
     }
 
     @Test
-    public void getCompleteConfigValue_CompleteTruncation() {
+    void getCompleteConfigValue_CompleteTruncation() {
         assertThat(dynamicConfigValueHelper.getCompleteConfigValue("{0}123456")).isEqualTo("123456");
 
     }
-
 
 }
