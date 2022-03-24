@@ -88,8 +88,8 @@ public class StartupLogging {
 
         List<String> methodNames = new ArrayList<>();
 
-        Class currentClass = ProxyUtils.getUnproxiedClass(config.getClass());
-        ModuleConfigName moduleConfigName = (ModuleConfigName) currentClass.getAnnotation(ModuleConfigName.class);
+        Class<?> currentClass = ProxyUtils.getUnproxiedClass(config.getClass());
+        ModuleConfigName moduleConfigName = currentClass.getAnnotation(ModuleConfigName.class);
 
         while (currentClass != null &&
                 !Object.class.getName().equals(currentClass.getName())) {
