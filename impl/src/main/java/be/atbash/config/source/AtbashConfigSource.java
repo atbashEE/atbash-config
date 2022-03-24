@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Rudy De Busscher
+ * Copyright 2017-2022 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,10 +36,10 @@ public class AtbashConfigSource extends AbstractConfigSource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AtbashConfigSource.class);
 
-    private int ordinal;
-    private String configLocation;
+    private final int ordinal;
+    private final String configLocation;
 
-    private Map<String, String> properties;
+    private final Map<String, String> properties;
 
     public AtbashConfigSource(ConfigType configType, String configLocation, int ordinal) {
         this.ordinal = ordinal;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Rudy De Busscher
+ * Copyright 2017-2022 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,10 @@ import jakarta.enterprise.inject.Vetoed;
 
 @Priority(100)
 @Vetoed
-public class ClassConverter implements Converter<Class> {
+public class ClassConverter implements Converter<Class<?>> {
 
     @Override
-    public Class convert(String value) {
+    public Class<?> convert(String value) {
         if (value == null) {
             return null;
         }

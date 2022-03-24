@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Rudy De Busscher
+ * Copyright 2017-2022 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public class StartupLogging {
     private static final Logger LOGGER = LoggerFactory.getLogger(StartupLogging.class);
     private static final String VALUE_OUTPUT = "   value:\t";
 
-    private String separator = System.getProperty("line.separator");
+    private final String separator = System.getProperty("line.separator");
 
     private boolean allLoggingActivated;
 
@@ -76,7 +76,7 @@ public class StartupLogging {
         allLoggingActivated = "true".equalsIgnoreCase(logAllProperty);
 
         Boolean disabledLogging = ConfigProvider.getConfig().getOptionalValue("atbash.config.log.disabled", Boolean.class).orElse(null);
-        loggingDisabled = disabledLogging == null ? false : disabledLogging;
+        loggingDisabled = disabledLogging != null && disabledLogging;
     }
 
     //generic alternative to #toString to avoid an overriden #toString at custom implementations
@@ -91,8 +91,7 @@ public class StartupLogging {
         Class<?> currentClass = ProxyUtils.getUnproxiedClass(config.getClass());
         ModuleConfigName moduleConfigName = currentClass.getAnnotation(ModuleConfigName.class);
 
-        while (currentClass != null &&
-                !Object.class.getName().equals(currentClass.getName())) {
+        while (currentClass != null && !currentClass.equals(Object.class)) {
 
             StringBuilder configLogging = new StringBuilder();
 
@@ -129,7 +128,7 @@ public class StartupLogging {
         return info.toString();
     }
 
-    private void outputConfigurationName(StringBuilder info, ModuleConfigName moduleConfigName, Class currentClass) {
+    private void outputConfigurationName(StringBuilder info, ModuleConfigName moduleConfigName, Class<?> currentClass) {
 
         if (moduleConfigName == null) {
             // No annotation -> output class name, azlso for the parent classes.
@@ -158,7 +157,7 @@ public class StartupLogging {
         }
     }
 
-    private void outputNameAndClassName(StringBuilder info, ModuleConfigName moduleConfigName, Class currentClass) {
+    private void outputNameAndClassName(StringBuilder info, ModuleConfigName moduleConfigName, Class<?> currentClass) {
         info.append("Config implementation: ");
         info.append(moduleConfigName.value());
         info.append(" ( ");

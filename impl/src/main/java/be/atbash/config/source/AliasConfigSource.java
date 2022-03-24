@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Rudy De Busscher
+ * Copyright 2017-2022 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ public class AliasConfigSource implements ConfigSource {
 
     private Logger logger = LoggerFactory.getLogger(AliasConfigSource.class);
 
-    private Map<String, String> keyMapping;
-    private List<String> usedOldKeys;
+    private final Map<String, String> keyMapping;
+    private final List<String> usedOldKeys;
 
     public AliasConfigSource() {
         usedOldKeys = new ArrayList<>();

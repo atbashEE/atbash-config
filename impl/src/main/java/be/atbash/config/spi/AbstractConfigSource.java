@@ -33,6 +33,7 @@ public abstract class AbstractConfigSource implements ConfigSource {
      *
      * @return the set of property keys that are known to this ConfigSource
      */
+    @Override
     public Set<String> getPropertyNames() {
         return getProperties().keySet();
     }
@@ -59,6 +60,7 @@ public abstract class AbstractConfigSource implements ConfigSource {
      *
      * @return the ordinal value
      */
+    @Override
     public int getOrdinal() {
         String configOrdinal = getValue(CONFIG_ORDINAL);
         if (configOrdinal != null) {
