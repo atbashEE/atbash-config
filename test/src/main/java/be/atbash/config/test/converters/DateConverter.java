@@ -18,8 +18,8 @@ package be.atbash.config.test.converters;
 
 import org.eclipse.microprofile.config.spi.Converter;
 
+import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -33,7 +33,7 @@ public class DateConverter implements Converter<Date> {
     public Date convert(String value) {
         if (value != null) {
             try {
-                return SimpleDateFormat.getDateInstance().parse(value);
+                return DateFormat.getDateInstance().parse(value);
             } catch (ParseException pe) {
                 throw new IllegalArgumentException(pe);
             }

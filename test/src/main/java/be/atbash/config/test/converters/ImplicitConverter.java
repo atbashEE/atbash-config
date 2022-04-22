@@ -46,10 +46,10 @@ public abstract class ImplicitConverter {
             converter = hasConverterMethod(clazz, "valueOf", CharSequence.class);
         }
         if (converter == null) {
-            converter = hasConverterCt(clazz, String.class);
+            converter = (Converter<T>) hasConverterCt(clazz, String.class);
         }
         if (converter == null) {
-            converter = hasConverterCt(clazz, CharSequence.class);
+            converter = (Converter<T>) hasConverterCt(clazz, CharSequence.class);
         }
         if (converter == null) {
             converter = hasConverterMethod(clazz, "parse", String.class);
@@ -60,7 +60,7 @@ public abstract class ImplicitConverter {
         return converter;
     }
 
-    private static Converter hasConverterCt(Class<?> clazz, Class<?> paramType) {
+    private static Converter<?> hasConverterCt(Class<?> clazz, Class<?> paramType) {
         try {
             final Constructor<?> declaredConstructor = clazz.getDeclaredConstructor(paramType);
             if (!declaredConstructor.isAccessible()) {
@@ -82,7 +82,7 @@ public abstract class ImplicitConverter {
     private static <T> Converter<T> hasConverterMethod(Class<T> clazz, String methodName, Class<?> paramType) {
         // handle valueOf with CharSequence param
         try {
-            final Method method = clazz.getDeclaredMethod(methodName, paramType);
+             Method method = clazz.getDeclaredMethod(methodName, paramType);
             if (!method.isAccessible()) {
                 method.setAccessible(true);
             }
@@ -117,7 +117,7 @@ public abstract class ImplicitConverter {
                 return null;
             }
 
-            List list = new ArrayList();
+            List<T> list = new ArrayList<>();
             StringBuilder currentValue = new StringBuilder();
             int length = valueStr.length();
             for (int i = 0; i < length; i++) {
