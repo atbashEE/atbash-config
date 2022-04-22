@@ -1,58 +1,18 @@
-= Atbash Configuration
+= Atbash Configuration (Jakarta version)
 Rudy De Busscher <rdebusscher@gmail.com>
-v1.0.0, ??/??/2019
+v1.0.0, 22/04/2022
 :example-caption!:
 ifndef::imagesdir[:imagesdir: images]
 ifndef::sourcedir[:sourcedir: ../../main/java]
 
-User manual for Atbash configuration.
+User manual for Atbash configuration. (Jakarta version)
 
 == Release Notes
 
 === 1.0.0
 
-. Compiled for and requires Java 8.
-. Dropped Java 7 port of MicroProfile API and Geronimo Configuration Implementation.
-. Updated to Java EE 8 versions
-
-. Using JUnit 5 for testing
-
-Remark: If you need a Java 7 compatible version please use version 0.9.3.
-
-=== 0.9.3
-
-. Support for _alternative_ configuration keys.
-
-Breaking change: ResourceUtils moved to Utils SE project.
-
-=== 0.9.2
-
-. Defining base name with config is now optional for Config extensions (ServiceLoader config not required) Only date format can be used on default _microprofile-config.properties_ file for the moment.
-. Added missing ClassConverter for TestConfig
-. Updated to MicroProfile Config 1.3 (integrated updates from Apache Geronimo Config 1.2)
-
-=== 0.9.1.1
-
-. Exposed be.atbash.config.util.ResourceUtils#getInputStreamForPath()
-. Better integration with Atbash Utils SE
-
-Remark : ResourceUtils will be moved to Utils SE project.
-
-=== 0.9.1
-
-. Upgrade to MicroProfile Config 1.2 compatible (Class converter and implicit converters)
-. _atbash-config-test_ artifact containing a Map based Config implementation for Unit testing.
-. _AbstractConfiguration_ containing some helper methods to retrieve optional values programmatically.
-. _@ModuleConfigName_ to define the name of the logging instead of the class name.
-. Logging in Java SE.
-. Parameter _atbash.config.log.disabled_ to completely disable logging.
-. Logging no longer contain class name when it contains no _@ConfigEntry_ entries.
-. Fix issue retrieving optional configuration parameter using 'real' MP Config implementation
-
-=== 0.9
-
-. Initial release, based on some extensions written for DeltaSpike logging.
-. MicroProfile Config 1.1 compatible
+. Jakarta namespace version of Atbash Config.
+. JDK 11 required as minimal version.
 
 == Introduction
 
@@ -79,9 +39,9 @@ This artifact can be used with any MP Config 1.1 compliant implementation.
 .Atbash extension
 ----
     <dependency>
-        <groupId>be.atbash.config</groupId>
+        <groupId>be.atbash.jakarta.config</groupId>
         <artifactId>atbash-config</artifactId>
-        <version>${atbash.config.version}</version>
+        <version>${atbash.jakarta.config.version}</version>
     </dependency>
 ----
 
@@ -94,7 +54,7 @@ The list of features is described in the _Atbash configuration features_ section
 
 In the MicroProfile Configuration specification, the file name which contains the configuration values is fixed and defined as **META-INF/microprofile-config.properties**.
 
-However, Atbash configuration should also be available within applications which aren't categorized as micro-services, but general Java EE application (perhaps a Web application using JSF framework)
+However, Atbash configuration should also be available within applications which aren't categorized as micro-services, but general Jakarta EE application (perhaps a Web application using JSF framework)
 
 Therefore the _base_ name of the configuration file is specified by implementing the **be.atbash.config.spi.BaseConfigurationName** interface and defining this class for usage with the ServiceLoader mechanism of Java.
 
@@ -121,6 +81,8 @@ In the above example, the file **demo.properties** (but also demo.yaml; see furt
 Multiple classes implementing the interface (and specified within the ServiceLoader file) are supported.
 
 === Support for multiple _stages_
+
+**MicroProfile Config also has the concept of a Profile since version 2.0 **
 
 Everyone agrees that your artifact (thin war or fat jar) shouldn't be changed between the different stages like _Testing_, _Acceptance_ and _Production_.
 
@@ -295,7 +257,7 @@ Config implementation: be.atbash.config.examples.ee.configname.ParentConfig
 
 ----
 
-=== Alternative configuration keys (0.9.3)
+=== Alternative configuration keys
 
 The support for alternative key values is introduced for supporting functionality to change configuration key values in a backwards compatible way.
 
@@ -410,7 +372,7 @@ dateValue : 16-11-2017,dd-MM-yyyy
 
 TODO
 
-=== AbstractConfiguration (0.9.1)
+=== AbstractConfiguration
 
 An abstract class which can be used to retrieve optional configuration values with or without a default value.
 
@@ -437,7 +399,7 @@ Next to the basic functionality of MP Configuration (like converts), following A
 - Flexible date format support.
 - YAML layout for configuration values.
 
-=== Logging in Java SE (0.9.1)
+=== Logging in Java SE
 
 All CDI beans implementing the _ModuleConfig_ marker interface containing methods specifying some configuration values (with _@ConfigEntry_) are logged automatically during startup of the application.
 
@@ -451,7 +413,7 @@ The class must only implement the marker _ModuleConfig_ interface and with the f
     StartupLogging.logConfiguration(moduleConfiguration);
 ----
 
-== Test module (0.9.1)
+== Test module
 
 When other projects are using the _Atbash config_ resources, for their configuration through parameter values, tests are probably failing with the message.
 
@@ -467,9 +429,9 @@ For testing, a simple implementation based on a HashMap which can be filled acco
 [source,xml]
 ----
     <dependency>
-        <groupId>be.atbash.config</groupId>
+        <groupId>be.atbash.jakarta.config</groupId>
         <artifactId>atbash-config-test</artifactId>
-        <version>${atbash.config.version}</version>
+        <version>${atbash.jakarta.config.version}</version>
         <scope>test</scope>
     </dependency>
 ----
@@ -498,22 +460,4 @@ Probably you want the default converters in place so that you can retrieve the c
 ----
 
 Additional converters can be registered by the **registerConverter(Converter<?>)** method. And all the converters are removed by the **deregisterAllConverters()** method.
-
-== Backwards Compatibility
-
-=== 0.9.1.1
-
-No issues on classes marked as @PublicAPI.
-
-Internal ProxyUtils class moved to utils-se.
-
-=== 0.9.1
-
-No blocking issues except you created a custom ConfigBuilder or custom ConfigSource
-
-(See also pom.xml for the CLIRR analysis)
-
-- ConfigBuilder interface has new method withConverter()
-- ConfigSource interface has additional method getPropertyNames().
-
 
