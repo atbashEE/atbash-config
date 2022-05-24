@@ -1,5 +1,5 @@
 ====
-    Copyright 2017-2019 Rudy De Busscher
+    Copyright 2017-2022 Rudy De Busscher
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -25,4 +25,4 @@ mvn license:format
 
 
 
-mvn versions:set -DnewVersion=1.0.0-SNAPSHOT -DgenerateBackupPoms=false
+mvn clirr:check

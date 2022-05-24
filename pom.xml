@@ -110,11 +110,18 @@
                 <configuration>
                     <ignored>
 
-                        <!-- atbash config extensions-->
                         <difference>
-                            <!-- Moved to Atbash utils se -->
-                            <className>be/atbash/config/util/ProxyUtils</className>
+                            <!-- Breaking change due to dropping support Java 8 and introduce Optional -->
+                            <className> be.atbash.config.ConfigOptionalValue</className>
                             <differenceType>8001</differenceType>
+                        </difference>
+
+                        <difference>
+                            <!-- Breaking change due to dropping support Java 8 and introduce Optional -->
+                            <className>be.atbash.config.test.TestConfig</className>
+                            <differenceType>7006</differenceType>
+                            <method>getOptionalValue</method>
+                            <to>*</to>
                         </difference>
 
                     </ignored>

@@ -1,6 +1,6 @@
 = Atbash Configuration
 Rudy De Busscher <rdebusscher@gmail.com>
-v1.0.0, ??/??/2019
+v1.0.0, 24/05/2022
 :example-caption!:
 ifndef::imagesdir[:imagesdir: images]
 ifndef::sourcedir[:sourcedir: ../../main/java]
@@ -12,7 +12,7 @@ User manual for Atbash configuration.
 === 1.0.0
 
 . Compiled for and requires Java 8.
-. Dropped Java 7 port of MicroProfile API and Geronimo Configuration Implementation.
+. Dropped Java 7 port of MicroProfile API and Geronimo Configuration Implementation. (Method signature changes around Optional)
 . Updated to Java EE 8 versions
 
 . Using JUnit 5 for testing
@@ -500,6 +500,10 @@ Probably you want the default converters in place so that you can retrieve the c
 Additional converters can be registered by the **registerConverter(Converter<?>)** method. And all the converters are removed by the **deregisterAllConverters()** method.
 
 == Backwards Compatibility
+
+=== 1.0.0
+
+Dropped the Java 7 support and introduced the usage of Optional. This will lead to some changes in methods and behaviour since MicroProfile Config is now used as is.
 
 === 0.9.1.1
 
