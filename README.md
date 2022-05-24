@@ -3,19 +3,9 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/be.atbash.config/atbash-config/badge.svg)](https://maven-badges.herokuapp.com/maven-central/be.atbash.config/atbash-config)
 
 # atbash-config
-MicroProfile Config port to Java 7 with extensions
+Additional functionality on top of MicroProfile Config 1.x - 3.x
 
-## MP Configuration running on Java 7
-
-If you just want to run an implementation of MP configuration on Java 7 (without the Atbash extensions), you can add the following dependency to your application.
-
-    <dependency>
-        <groupId>be.atbash.config</groupId>
-        <artifactId>geronimo-config</artifactId>
-        <version>${atbash.config.version}</version>
-    </dependency>
-
-For the list of features and how to use them, I refer to the MicroProfile configuration documentation and examples.
+If you still need support for Java 7, please use version v0.9.3
 
 ## Atbash configuration extension
 
