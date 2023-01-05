@@ -24,13 +24,13 @@
     <parent>
         <groupId>be.atbash.config.examples</groupId>
         <artifactId>examples-se</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>be.atbash.config.examples.se</groupId>
     <artifactId>config-properties</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Atbash configuration examples for Java SE - properties version</name>

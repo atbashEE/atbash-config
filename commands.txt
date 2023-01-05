@@ -24,5 +24,7 @@ mvn clean install
 mvn license:format
 
 
-
 mvn clirr:check
+
+# Setting versions
+mvn versions:set -DnewVersion=1.1.0-SNAPSHOT -DgenerateBackupPoms=false
