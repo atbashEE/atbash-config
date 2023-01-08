@@ -40,7 +40,7 @@ public class StartupLogging {
     private static final Logger LOGGER = LoggerFactory.getLogger(StartupLogging.class);
     private static final String VALUE_OUTPUT = "   value:\t";
 
-    private String separator = System.getProperty("line.separator");
+    private final String separator = System.getProperty("line.separator");
 
     private boolean allLoggingActivated;
 
@@ -76,12 +76,12 @@ public class StartupLogging {
         allLoggingActivated = "true".equalsIgnoreCase(logAllProperty);
 
         Boolean disabledLogging = ConfigProvider.getConfig().getOptionalValue("atbash.config.log.disabled", Boolean.class).orElse(null);
-        loggingDisabled = disabledLogging == null ? false : disabledLogging;
+        loggingDisabled = disabledLogging != null && disabledLogging;
     }
 
     //generic alternative to #toString to avoid an overriden #toString at custom implementations
     public String getConfigInfo(ModuleConfig config) {
-        if (loggingDisabled) {
+        if (loggingDisabled || logDisabledForModule(config)) {
             return null;
         }
         StringBuilder info = new StringBuilder();
@@ -127,6 +127,11 @@ public class StartupLogging {
         }
 
         return info.toString();
+    }
+
+    private boolean logDisabledForModule(ModuleConfig config) {
+        String key = String.format("atbash.config.log.%s.disabled", config.getClass().getSimpleName());
+        return ConfigProvider.getConfig().getOptionalValue(key, Boolean.class).orElse(false);
     }
 
     private void outputConfigurationName(StringBuilder info, ModuleConfigName moduleConfigName, Class currentClass) {
