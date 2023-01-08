@@ -24,12 +24,12 @@
     <parent>
         <groupId>be.atbash.jakarta.config</groupId>
         <artifactId>config-examples</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0-SNAPSPHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>config-example-ee</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0-SNAPSPHOT</version>
     <packaging>war</packaging>
 
     <name>Atbash configuration example for Jakarta EE</name>
