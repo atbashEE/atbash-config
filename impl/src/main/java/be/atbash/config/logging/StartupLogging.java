@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2022 Rudy De Busscher
+ * Copyright 2017-2023 Rudy De Busscher
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 package be.atbash.config.logging;
 
 import be.atbash.util.ProxyUtils;
-import org.eclipse.microprofile.config.ConfigProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Initialized;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
+import org.eclipse.microprofile.config.ConfigProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -64,7 +64,10 @@ public class StartupLogging {
         configInfo.append('\n');
 
         for (ModuleConfig config : moduleConfigs) {
-            configInfo.append(getConfigInfo(config));
+            String info = getConfigInfo(config);
+            if (info != null) {
+                configInfo.append(info);
+            }
         }
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info(configInfo.toString());
@@ -81,7 +84,7 @@ public class StartupLogging {
 
     //generic alternative to #toString to avoid an overriden #toString at custom implementations
     public String getConfigInfo(ModuleConfig config) {
-        if (loggingDisabled) {
+        if (loggingDisabled || logDisabledForModule(config)) {
             return null;
         }
         StringBuilder info = new StringBuilder();
@@ -126,6 +129,12 @@ public class StartupLogging {
         }
 
         return info.toString();
+    }
+
+    private boolean logDisabledForModule(ModuleConfig config) {
+        Class<?> unproxiedClass = ProxyUtils.getUnproxiedClass(config.getClass());
+        String key = String.format("atbash.config.log.%s.disabled", unproxiedClass.getSimpleName());
+        return ConfigProvider.getConfig().getOptionalValue(key, Boolean.class).orElse(false);
     }
 
     private void outputConfigurationName(StringBuilder info, ModuleConfigName moduleConfigName, Class<?> currentClass) {

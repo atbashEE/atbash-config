@@ -18,9 +18,12 @@ package be.atbash.config.logging;
 import be.atbash.config.AbstractConfiguration;
 import be.atbash.config.logging.testclasses.HierarchyConfig;
 import be.atbash.config.logging.testclasses.TestModuleConfig;
+import be.atbash.config.test.TestConfig;
 import be.atbash.util.TestReflectionUtils;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 
@@ -31,22 +34,25 @@ public class StartupLoggingTest {
     private static final String VALUE_SEPARATOR = "value:";
     private static final String NO_LOGGING = "Nologgingparameteractive";
 
-    private DynamicConfigValueHelper valueHelper;
-
     private StartupLogging logging;
 
     @BeforeEach
     public void setup() throws IllegalAccessException {
-        valueHelper = new DynamicConfigValueHelper();
+        DynamicConfigValueHelper valueHelper = new DynamicConfigValueHelper();
         logging = new StartupLogging();
 
         TestReflectionUtils.injectDependencies(logging, valueHelper);
     }
 
+    @AfterEach
+    public void tearDown() {
+        TestConfig.resetConfig();
+        System.clearProperty("atbash.config.log.all");
+        System.clearProperty("atbash.config.log.disabled");
+    }
+
     @Test
     public void getConfigInfo() {
-        System.setProperty("atbash.config.log.all", "");
-
         String info = logging.getConfigInfo(new TestModuleConfig());
         String data = info.replaceAll("\\s", "");
 
@@ -64,9 +70,16 @@ public class StartupLoggingTest {
     }
 
     @Test
-    public void getConfigInfo_NoLogging() {
-        System.setProperty("atbash.config.log.all", "");
+    public void getConfigInfo_disableModule() {
+        TestConfig.addConfigValue("atbash.config.log.TestModuleConfig.disabled", "true");
 
+        String info = logging.getConfigInfo(new TestModuleConfig());
+        Assertions.assertThat(info).isNull();
+
+    }
+
+    @Test
+    public void getConfigInfo_NoLogging() {
         String info = logging.getConfigInfo(new TestModuleConfig.NoLogConfig());
         String data = info.replaceAll("\\s", "");
 
@@ -94,8 +107,6 @@ public class StartupLoggingTest {
 
     @Test
     public void getConfigInfo_hierarchy() {
-        System.setProperty("atbash.config.log.all", "");
-
         String info = logging.getConfigInfo(new HierarchyConfig());
         String data = info.replaceAll("\\s", "");
 
@@ -106,7 +117,6 @@ public class StartupLoggingTest {
 
     @Test
     public void getConfigInfo_disabledLogging() throws NoSuchFieldException, IllegalAccessException {
-        System.setProperty("atbash.config.log.all", "");
         System.setProperty("atbash.config.log.disabled", "true");
 
         Field loggingDisabled = logging.getClass().getDeclaredField("loggingDisabled");

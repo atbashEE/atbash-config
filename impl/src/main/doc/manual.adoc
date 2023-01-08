@@ -9,6 +9,10 @@ User manual for Atbash configuration. (Jakarta version)
 
 == Release Notes
 
+=== 1.1.0
+
+. Ability to disable logging for a single `ModuleConfig`
+
 === 1.0.0
 
 . Jakarta namespace version of Atbash Config.
@@ -181,6 +185,19 @@ Since 0.9.1, the logging can be disabled by specifying the value _true_ for the 
 This is a regular parameter, resolved from configuration file, or environment based on the rules described in the section of the multiple stages.
 
 So we can for instance disable the logging completely in production, but not in test for example.
+
+Since 1.1.0, you can disable the logging of certain `ConfigModule` alone by using the  configuration parameter **atbash.config.log.<classname>.disabled**.  In the case you have this class
+
+----
+public class ModuleConfiguration implements ModuleConfig {
+}
+----
+
+You can disable it with
+
+----
+atbash.config.log.ModuleConfiguration.disabled=true
+----
 
 === Specify the configuration name (0.9.1)
 
